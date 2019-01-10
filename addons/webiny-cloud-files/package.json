@@ -17,11 +17,10 @@
     "webiny-plugins": "0.0.0"
   },
   "peerDependencies" :{
+    "graphql-tag": "^2.8.0",
     "apollo-cache-inmemory": "^1.1.12",
     "apollo-client": "^2.2.8",
     "apollo-link": "^1.2.1",
-    "apollo-link-context": "^1.0.7",
-    "apollo-link-http": "^1.5.3",
     "apollo-link-batch-http": "^1.2.3",
     "classnames": "^2.2.5"
   },

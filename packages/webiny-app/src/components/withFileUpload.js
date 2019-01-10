@@ -17,14 +17,6 @@ export type WithFileUploadPlugin = PluginType & {
     upload: (file: FileBrowserFile, options: Object) => Promise<any>
 };
 
-export type FileUploadSuccess = FileBrowserFile & {
-    // Nothing for now, probably won't be anything here.
-};
-
-export type FileUploadError = {
-    // TODO - still no unified error messaging on the API side.
-};
-
 const mustUpload = (file: FileBrowserFile) => {
     if (!file) {
         return false;
