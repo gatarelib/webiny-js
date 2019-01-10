@@ -8,6 +8,7 @@ import cookiePolicyPlugins from "webiny-integration-cookie-policy/plugins/admin"
 import googleTagManagerPlugins from "webiny-integration-google-tag-manager/plugins/admin";
 import typeformPlugins from "webiny-integration-typeform/plugins/admin";
 import mailchimpPlugins from "webiny-integration-mailchimp/plugins/admin";
+import webinyCloudFiles from "webiny-cloud-files/plugins";
 
 export default [
     fileUploadPlugin,
@@ -18,5 +19,6 @@ export default [
     cookiePolicyPlugins,
     googleTagManagerPlugins,
     typeformPlugins,
-    mailchimpPlugins
+    mailchimpPlugins,
+    webinyCloudFiles
 ];

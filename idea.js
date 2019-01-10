@@ -16,6 +16,7 @@ System.config({
         "webiny-integration-google-tag-manager/*":
             "./addons/webiny-integration-google-tag-manager/src/*",
         "webiny-integration-mailchimp/*": "./addons/webiny-integration-mailchimp/src/*",
-        "webiny-integration-typeform/*": "./addons/webiny-integration-typeform/src/*"
+        "webiny-integration-typeform/*": "./addons/webiny-integration-typeform/src/*",
+        "webiny-cloud-files/*": "./addons/webiny-cloud-files/src/*"
     }
 });

@@ -26,6 +26,12 @@ export const hasScope = (scope: string) => {
     });
 };
 
+export const authenticated = () => {
+    return rule()(async (parent, args, ctx) => {
+        return !!ctx.user;
+    });
+};
+
 export const hasRole = (role: string) => {
     return rule()(async (parent, args, ctx) => {
         if (!ctx.user) {

@@ -42,7 +42,7 @@ export default {
             plugin: "image-component"
         },
         withFileUpload: {
-            plugin: ["with-file-upload", { uri: "/files" }]
+            plugin: ["webiny-cloud-files", { uri: "http://localhost:9003/graphql" }]
         }
     }
 };

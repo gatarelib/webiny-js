@@ -90,11 +90,11 @@ export const createHandler = (config: Object = {}) => {
                 }
             }
 
-            const securityPlugins = getPlugins("security");
-            for (let i = 0; i < securityPlugins.length; i++) {
-                let securityPlugin = securityPlugins[i];
+            const contextPlugins = getPlugins("graphql-context-request");
+            for (let i = 0; i < contextPlugins.length; i++) {
+                let plugin = contextPlugins[i];
                 try {
-                    await securityPlugin.authenticate(config, event, context);
+                    await plugin.apply({ config, event, context });
                 } catch (e) {
                     return resolve(getErrorResponse(e));
                 }

@@ -1,5 +1,6 @@
 // @flow
 import apiPlugins from "webiny-api/plugins";
+import webinyCloudFilesPlugins from "webiny-cloud-files/api/plugins";
 import securityPlugins from "webiny-api-security/plugins";
 import cmsPlugins from "webiny-api-cms/plugins";
 import cookiePolicyPlugins from "webiny-integration-cookie-policy/plugins/api";
@@ -12,5 +13,6 @@ export default [
     cmsPlugins,
     cookiePolicyPlugins,
     gtmPlugins,
-    mailchimpPlugins
+    mailchimpPlugins,
+    webinyCloudFilesPlugins({ encryptionKey: "random-string" })
 ];

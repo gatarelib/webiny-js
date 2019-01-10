@@ -4,6 +4,7 @@ import authenticate from "./authentication/authenticate";
 import { getPlugins } from "webiny-plugins";
 import { shield } from "graphql-shield";
 import { get } from "lodash";
+import { type GraphQlSecurityPluginType } from "webiny-api-security/types";
 
 export default ([
     {
@@ -33,5 +34,17 @@ export default ([
             return middleware;
         }
     },
-    { type: "security", name: "security", authenticate }
+    {
+        type: "graphql-context-request",
+        name: "graphql-context-request-security",
+        apply: async args => {
+            const securityPlugins: Array<GraphQlSecurityPluginType> = getPlugins(
+                "graphql-security"
+            );
+            for (let i = 0; i < securityPlugins.length; i++) {
+                args.context.user = await securityPlugins[i].authenticate(args);
+            }
+        }
+    },
+    { type: "graphql-security", name: "security", authenticate }
 ]: Array<PluginType>);

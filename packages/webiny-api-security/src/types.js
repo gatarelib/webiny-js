@@ -1,6 +1,6 @@
 // @flow
 import type { PluginType } from "webiny-plugins/types";
 
-export type SecurityPluginType = PluginType & {
-    authenticate: Function
+export type GraphQlSecurityPluginType = PluginType & {
+    authentication: ({ context: Object }) => Object
 };

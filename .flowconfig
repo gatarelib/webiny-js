@@ -58,6 +58,7 @@ module.name_mapper='^webiny-integration-cookie-policy/?\(.*\)$' -> '<PROJECT_ROO
 module.name_mapper='^webiny-integration-google-tag-manager/?\(.*\)$' -> '<PROJECT_ROOT>/addons/webiny-integration-google-tag-manager/src/\1'
 module.name_mapper='^webiny-integration-mailchimp/?\(.*\)$' -> '<PROJECT_ROOT>/addons/webiny-integration-mailchimp/src/\1'
 module.name_mapper='^webiny-integration-typeform/?\(.*\)$' -> '<PROJECT_ROOT>/addons/webiny-integration-typeform/src/\1'
+module.name_mapper='^webiny-cloud-files/?\(.*\)$' -> '<PROJECT_ROOT>/addons/webiny-cloud-files/src/\1'
 
 [strict]
 
