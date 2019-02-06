@@ -10,6 +10,7 @@ export interface IElement extends Entity {
     type: ElementType;
     category: ?string;
     preview: Object;
+    global: boolean;
 }
 
 export function elementFactory(): Class<IElement> {
@@ -22,6 +23,7 @@ export function elementFactory(): Class<IElement> {
         type: ElementType;
         category: ?string;
         preview: Object;
+        global: boolean;
 
         constructor() {
             super();
@@ -33,6 +35,10 @@ export function elementFactory(): Class<IElement> {
             this.attr("category").char();
 
             this.attr("content").object();
+
+            this.attr("global")
+                .boolean()
+                .setDefaultValue(false);
 
             this.attr("type")
                 .char()

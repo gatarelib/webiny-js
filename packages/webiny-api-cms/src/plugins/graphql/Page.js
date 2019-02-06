@@ -1,17 +1,11 @@
 // @flow
-import {
-    resolveCreate,
-    resolveUpdate,
-    resolveDelete,
-    resolveGet,
-    resolveList
-} from "webiny-api/graphql";
-import { Response } from "webiny-api/graphql/responses";
+import { resolveCreate, resolveUpdate, resolveDelete, resolveList } from "webiny-api/graphql";
 import UserType from "webiny-api-security/plugins/graphql/User";
 import createRevisionFrom from "./pageResolvers/createRevisionFrom";
 import listPages from "./pageResolvers/listPages";
 import listPublishedPages from "./pageResolvers/listPublishedPages";
 import getPublishedPage from "./pageResolvers/getPublishedPage";
+import crudGetPage from "./pageResolvers/crudGetPage";
 import getHomePage from "./pageResolvers/getHomePage";
 import getNotFoundPage from "./pageResolvers/getNotFoundPage";
 import getErrorPage from "./pageResolvers/getErrorPage";
@@ -54,6 +48,7 @@ export default {
             category: String
             content: JSON
             preview: File
+            global: Boolean
         }
         
         input ElementInput {
@@ -62,6 +57,7 @@ export default {
             category: String
             content: JSON!
             preview: FileInput
+            global: Boolean
         }
                 
         input UpdateElementInput {
@@ -69,6 +65,7 @@ export default {
             category: String
             content: JSON
             preview: FileInput
+            global: Boolean
         }
         
         input UpdatePageInput {
@@ -230,7 +227,7 @@ export default {
     ],
     resolvers: {
         CmsQuery: {
-            getPage: resolveGet(pageFetcher),
+            getPage: crudGetPage(pageFetcher),
             listPages: listPages(pageFetcher),
             listPublishedPages,
             getPublishedPage,

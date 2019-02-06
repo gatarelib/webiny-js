@@ -10,6 +10,7 @@ type Element = {
     type: string,
     category: string,
     content: Object,
+    global: boolean,
     preview: {
         src: string,
         width: number,
@@ -27,7 +28,7 @@ export default (el: Element) => {
         tags: ["saved"],
         image: el.preview,
         create() {
-            return cloneDeep({ ...el.content, source: el.id });
+            return cloneDeep({ ...el.content, source: el.id, global: el.global || undefined });
         },
         preview() {
             return (

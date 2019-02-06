@@ -134,7 +134,7 @@ export default compose(
                     <div className="background" onClick={onClick} />
                     <div className={"element-holder"} onClick={onClick}>
                         {renderPlugins("cms-element-action", { element, plugin })}
-                        <span>{plugin.name.replace("cms-element-", "")}</span>
+                        <span>{plugin.name.replace("cms-element-", "")}{element.global && " (global)"}</span>
                     </div>
                 </div>
             );

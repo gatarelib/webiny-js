@@ -149,7 +149,7 @@ export const pageFactory = (context: Object): Class<IPage> => {
                 };
             });
 
-            this.on("beforeUpdate", () => {
+            this.on("beforeUpdate", async () => {
                 this.updatedBy = user.id;
             });
 

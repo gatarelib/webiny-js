@@ -62,7 +62,10 @@ const SaveDialog = (props: Props) => {
 
     return (
         <Dialog open={open} onClose={onClose} className={narrowDialog}>
-            <Form onSubmit={onSubmit} data={{ type, category: "cms-block-category-general" }}>
+            <Form
+                onSubmit={onSubmit}
+                data={{ type, category: "cms-block-category-general", overwrite: element.global }}
+            >
                 {({ data, submit, Bind }) => (
                     <React.Fragment>
                         <DialogHeader>
@@ -78,6 +81,16 @@ const SaveDialog = (props: Props) => {
                                     </Cell>
                                 </Grid>
                             )}
+                            {!data.overwrite && (
+                                <Grid>
+                                    <Cell span={12}>
+                                        <Bind name="global">
+                                            <Switch label={`Global ${type}`} />
+                                        </Bind>
+                                    </Cell>
+                                </Grid>
+                            )}
+
                             {!data.overwrite && (
                                 <Grid>
                                     <Cell span={12}>

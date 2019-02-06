@@ -142,6 +142,7 @@ name
 type
 category
 content
+global
 preview {
     src
     meta
