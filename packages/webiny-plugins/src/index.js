@@ -2,6 +2,7 @@
 import type { PluginType } from "webiny-plugins/types";
 
 const __plugins = {};
+const __loaded = {};
 
 const _register = plugins => {
     for (let i = 0; i < plugins.length; i++) {
@@ -17,18 +18,35 @@ const _register = plugins => {
         }
 
         __plugins[name] = plugin;
-        plugin.init && plugin.init();
+        __loaded[name] = typeof plugin.factory !== "function";
     }
 };
 
 export const registerPlugins = (...args: any): void => _register(args);
 
-export const getPlugins = (type: string): Array<PluginType> => {
+export const getPlugins = async (type: string): Promise<Array<PluginType>> => {
+    const values: Array<PluginType> = (Object.values(__plugins): any);
+
+    const loaded = await Promise.all(
+        values
+            .filter((plugin: PluginType) => (type ? plugin.type === type : true))
+            .map(pl => getPlugin(pl.name))
+    );
+
+    return [...loaded.filter(Boolean)];
+};
+
+export const getPluginsSync = (type: string): Array<PluginType> => {
     const values: Array<PluginType> = (Object.values(__plugins): any);
     return values.filter((plugin: PluginType) => (type ? plugin.type === type : true));
 };
 
-export const getPlugin = (name: string): ?PluginType => {
+export const getPlugin = async (name: string): Promise<PluginType | null> => {
+    if (!__loaded[name]) {
+        const loaded = await __plugins[name].factory();
+        __plugins[name] = { ...__plugins[name], ...loaded };
+        __loaded[name] = true;
+    }
     return __plugins[name];
 };
 

@@ -9,11 +9,11 @@ import { getPlugins } from "webiny-plugins";
 
 const createApolloHandler = async (config: Object) => {
     await setup(config);
-    let schema = prepareSchema();
+    let schema = await prepareSchema();
 
     const registeredMiddleware: Array<GraphQLMiddlewarePluginType> = [];
 
-    const middlewarePlugins = getPlugins("graphql-middleware");
+    const middlewarePlugins = await getPlugins("graphql-middleware");
     for (let i = 0; i < middlewarePlugins.length; i++) {
         let plugin = middlewarePlugins[i];
         const middleware =
@@ -39,15 +39,13 @@ const createApolloHandler = async (config: Object) => {
         delete info.operation["__runAtMostOnce"];
 
         // Process `graphql-context` plugins
-        const ctxPlugins = getPlugins("graphql-context");
+        const ctxPlugins = await getPlugins("graphql-context");
         for (let i = 0; i < ctxPlugins.length; i++) {
             const ctxPlugin = ctxPlugins[i];
             await ctxPlugin.apply(context);
         }
     });
     
-    console.log(config.apollo);
-
     const apollo = new ApolloServer({
         ...(config.apollo || {}),
         schema,

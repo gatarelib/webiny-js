@@ -1,6 +1,6 @@
 // @flow
 import { EntityModel } from "webiny-entity";
-import { getPlugins } from "webiny-plugins";
+import { getPluginsSync } from "webiny-plugins";
 
 export interface IPageSettings extends EntityModel {}
 
@@ -10,7 +10,7 @@ export default function pageSettingsFactory({ entities, page }: Object): Class<I
             super();
             this.setParentEntity(page);
 
-            getPlugins("cms-page-settings-model").forEach(pl => {
+            getPluginsSync("cms-page-settings-model").forEach(pl => {
                 pl.apply({ model: this, page, entities });
             });
         }
