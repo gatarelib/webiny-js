@@ -12,19 +12,21 @@ import defaultBarPlugins from "./../plugins/defaultBar";
 import slateEditorPlugins from "./../plugins/slate";
 import pageSettingsPlugins from "./../plugins/pageSettings";
 import breadcrumbs from "./../plugins/breadcrumbs";
+import icons from "./../plugins/icons";
 
 export default [
     contentBackground,
     breadcrumbs,
-    ...elementActions,
-    ...elementGroups,
-    ...blockEditing,
-    ...elements,
-    ...blocks,
-    ...blocksCategories,
-    ...toolbar,
-    ...elementSettings,
-    ...defaultBarPlugins,
-    ...slateEditorPlugins,
-    ...pageSettingsPlugins
+    icons,
+    elementActions,
+    elementGroups,
+    blockEditing,
+    elements,
+    blocks,
+    blocksCategories,
+    toolbar,
+    elementSettings,
+    defaultBarPlugins,
+    slateEditorPlugins,
+    pageSettingsPlugins
 ];
