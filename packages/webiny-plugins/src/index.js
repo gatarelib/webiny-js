@@ -63,6 +63,19 @@ export const getPlugin = async (name: string): Promise<PluginType | null> => {
     return __plugins[name];
 };
 
+export const getPluginSync = (name: string): PluginType | null => {
+    if (!__plugins[name]) {
+        return null;
+    }
+
+    if (!__loaded[name]) {
+        const loaded = __plugins[name].factory();
+        __plugins[name] = { ...__plugins[name], ...loaded };
+        __loaded[name] = true;
+    }
+    return __plugins[name];
+};
+
 export const unregisterPlugin = (name: string): void => {
     delete __plugins[name];
 };
