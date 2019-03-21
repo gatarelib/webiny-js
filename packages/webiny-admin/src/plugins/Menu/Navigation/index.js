@@ -9,8 +9,8 @@ import { compose, withProps, withHandlers } from "recompose";
 import _ from "lodash";
 import styled from "react-emotion";
 import { css } from "emotion";
-import { getPlugin, getPlugins } from "webiny-plugins";
-import { withUi } from "webiny-app/components";
+import { withUi, withPlugins } from "webiny-app/components";
+import { Plugin } from "webiny-app/components/Plugins";
 import { Typography } from "webiny-ui/Typography";
 import { Transition } from "react-transition-group";
 import Menu from "./Menu";
@@ -334,7 +334,7 @@ class Navigation extends React.Component<Props> {
             return this.menu;
         }
 
-        const menuPlugins = getPlugins("menu");
+        const menuPlugins = this.props.plugins;
         menuPlugins &&
             menuPlugins.forEach(plugin => {
                 this.addMenu(plugin.render({ Menu }));
@@ -344,11 +344,11 @@ class Navigation extends React.Component<Props> {
     };
 
     renderLogo = () => {
-        const logoPlugin = getPlugin("header-logo");
-        if (logoPlugin) {
-            return React.cloneElement(logoPlugin.render(), { className: logoStyle });
-        }
-        return null;
+        return (
+            <Plugin name={"header-logo"}>
+                {({ plugin }) => React.cloneElement(plugin.render(), { className: logoStyle })}
+            </Plugin>
+        );
     };
 
     render() {
@@ -432,5 +432,6 @@ export default compose(
     withProps(({ ui }) => ({
         appsMenu: ui.appsMenu || []
     })),
-    withHandlers(handlers)
+    withHandlers(handlers),
+    withPlugins({ type: "menu" })
 )(Navigation);

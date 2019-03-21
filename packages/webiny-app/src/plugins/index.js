@@ -5,15 +5,6 @@ import React from "react";
 import fileUploadPlugin from "./fileUploadPlugin";
 import imagePlugin from "./imagePlugin";
 
-type RenderPluginOptions = {
-    wrapper?: boolean,
-    fn?: string,
-    filter?: Function
-};
-
-const Plugin = ({ children }: { children: React.Node }) => children;
-const Plugins = ({ children }: { children: React.Node }) => children;
-
 export { fileUploadPlugin, imagePlugin };
 
 export const renderPlugin = (

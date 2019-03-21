@@ -1,9 +1,9 @@
 // @flow
 import * as React from "react";
 import invariant from "invariant";
-import { getPlugin } from "webiny-plugins";
 import type { PluginType } from "webiny-plugins/types";
 import { get } from "lodash";
+import { Plugin } from "webiny-app/components/Plugins";
 
 type ImageProps = Object & {
     src: string,
@@ -24,27 +24,30 @@ export type ImageComponentPluginType = PluginType & {
     getImageSrc: (props: ?Object) => string
 };
 
-const Component = (props: ImageProps) => {
+export const Image = (props: ImageProps) => {
     let { preset: presetName, ...rest } = props;
 
-    const instance = getPlugin("image-component");
-    if (!instance) {
-        throw new Error(`Image component plugin (type "image-component") not defined.`);
-    }
+    return (
+        <Plugin name={"image-component"}>
+            {({ plugin: instance }) => {
+                if (!instance) {
+                    throw new Error(`Image component plugin (type "image-component") not defined.`);
+                }
 
-    const plugin = { instance, props: { ...rest } };
+                const plugin = { instance, props: { ...rest } };
 
-    if (presetName) {
-        const preset = get(plugin.instance, `presets.${presetName}`);
-        invariant(preset, `Transform preset "${presetName}" not found.`);
-        plugin.props.transform = preset;
-    }
+                if (presetName) {
+                    const preset = get(plugin.instance, `presets.${presetName}`);
+                    invariant(preset, `Transform preset "${presetName}" not found.`);
+                    plugin.props.transform = preset;
+                }
 
-    if (plugin.props.transform) {
-        plugin.props.src = plugin.instance.getImageSrc(plugin.props);
-    }
+                if (plugin.props.transform) {
+                    plugin.props.src = plugin.instance.getImageSrc(plugin.props);
+                }
 
-    return plugin.instance.render(plugin.props);
+                return plugin.instance.render(plugin.props);
+            }}
+        </Plugin>
+    );
 };
-
-export const Image = Component;

@@ -9,6 +9,8 @@ type State = {
 
 export default class Addons extends React.Component<Props, State> {
     settings = {};
+    plugins = [];
+
     state = {
         ready: false
     };
@@ -29,9 +31,9 @@ export default class Addons extends React.Component<Props, State> {
     }
 
     async init() {
-        const plugins = getPlugins("addon-render");
-        for (let i = 0; i < plugins.length; i++) {
-            let plugin = plugins[i];
+        this.plugins = await getPlugins("addon-render");
+        for (let i = 0; i < this.plugins.length; i++) {
+            let plugin = this.plugins[i];
             this.settings[plugin.name] = {};
             if (plugin.settings) {
                 if (typeof plugin.settings === "function") {
@@ -46,7 +48,8 @@ export default class Addons extends React.Component<Props, State> {
     render() {
         const { ready } = this.state;
         if (ready) {
-            return getPlugins("addon-render").map(plugin => {
+            // $FlowFixMe
+            return this.plugins.map(plugin => {
                 return React.cloneElement(plugin.component, {
                     key: plugin.name,
                     settings: this.settings[plugin.name]

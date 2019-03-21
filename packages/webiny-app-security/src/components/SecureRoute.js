@@ -1,7 +1,7 @@
 // @flow
 import * as React from "react";
 import { hasScopes, hasRoles } from "webiny-app-security";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 
 export default ({ children, scopes, roles }: Object): React.Node => {
     const checks = {
@@ -13,9 +13,14 @@ export default ({ children, scopes, roles }: Object): React.Node => {
         return children;
     }
 
-    const plugin = getPlugin("secure-route-error");
-    if (!plugin) {
-        return <span>You are not authorized to view this route.</span>;
-    }
-    return plugin.render();
+    return (
+        <Plugin name={"secure-route-error"}>
+            {({ plugin }) => {
+                if (!plugin) {
+                    return <span>You are not authorized to view this route.</span>;
+                }
+                return plugin.render();
+            }}
+        </Plugin>
+    );
 };

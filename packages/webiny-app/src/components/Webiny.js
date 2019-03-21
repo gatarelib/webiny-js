@@ -3,7 +3,7 @@ import React from "react";
 import { ApolloProvider } from "react-apollo";
 import { router } from "../router";
 import { UiProvider } from "./Ui";
-import { getPlugins } from "webiny-plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 
 type WebinyProps = { config: Object, children: Function };
 
@@ -17,31 +17,32 @@ export const ConfigConsumer = ({ children }: Object) => (
     <Consumer>{config => React.cloneElement(children, { config })}</Consumer>
 );
 
-class Webiny extends React.Component<WebinyProps> {
-    constructor(props: Object) {
-        super();
-        getPlugins("webiny-init").forEach(plugin => {
-            plugin.callback();
-        });
+const Webiny = ({ config, children }: WebinyProps) => {
+    return (
+        <Plugins type={{ init: "webiny-init", routes: "route" }} loading={null}>
+            {({ plugins: { init, routes } }) => {
+                init.forEach(plugin => {
+                    plugin.callback();
+                });
 
-        // Setup router
-        router.configure(props.config.router);
-        getPlugins("route").forEach((pl: Object) => {
-            router.addRoute(pl.route);
-        });
-    }
+                // Setup router
+                router.configure(config.router);
+                routes.forEach((pl: Object) => {
+                    router.addRoute(pl.route);
+                });
 
-    render() {
-        const { config, children } = this.props;
-
-        return (
-            <ApolloProvider client={config.apolloClient}>
-                <UiProvider>
-                    <ConfigProvider config={config}>{children({ router, config })}</ConfigProvider>
-                </UiProvider>
-            </ApolloProvider>
-        );
-    }
-}
+                return (
+                    <ApolloProvider client={config.apolloClient}>
+                        <UiProvider>
+                            <ConfigProvider config={config}>
+                                {children({ router, config })}
+                            </ConfigProvider>
+                        </UiProvider>
+                    </ApolloProvider>
+                );
+            }}
+        </Plugins>
+    );
+};
 
 export default Webiny;

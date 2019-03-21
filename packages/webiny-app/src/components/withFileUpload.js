@@ -32,8 +32,8 @@ const mustUpload = (file: SelectedFile) => {
     return false;
 };
 
-const getFileUploader = () => {
-    const withFileUploadPlugin = getPlugin("with-file-upload-uploader");
+const getFileUploader = async () => {
+    const withFileUploadPlugin = await getPlugin("with-file-upload-uploader");
 
     invariant(
         withFileUploadPlugin,
@@ -65,13 +65,13 @@ export const withFileUpload = (options: WithFileUploadOptions = {}): Function =>
             graphql(createFile, { name: "gqlCreateFile" }),
             withHandlers({
                 uploadFile: props => async file => {
-                    return getFileUploader()(file).then(uploadedFile => {
+                    return (await getFileUploader())(file).then(uploadedFile => {
                         props.gqlCreateFile({ variables: { data: uploadedFile } });
                         return uploadedFile;
                     });
                 },
                 onChange: props => async file => {
-                    const upload = getFileUploader();
+                    const upload = await getFileUploader();
 
                     const { onChange } = props;
                     onChange && (await onChange(file));

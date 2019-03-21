@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { i18n } from "webiny-app/i18n";
-import { registerPlugins, getPlugins } from "webiny-plugins";
+import { registerPlugins, getPluginsSync } from "webiny-plugins";
 import { ReactComponent as SettingsIcon } from "webiny-admin/assets/icons/round-settings-24px.svg";
 import { AdminLayout } from "webiny-admin/components/AdminLayout";
 import type { SettingsPluginType } from "webiny-admin/types";
@@ -20,13 +20,13 @@ const renderPlugins = ({ plugins, Menu }) => {
 };
 
 export default [
-    {
+    /*{
         type: "webiny-init",
         name: "webiny-init-settings",
         callback() {
             // Settings
             // Apps / integrations can register settings plugins and add menu items like the following.
-            let settingsPlugins: Array<SettingsPluginType> = getPlugins("settings");
+            let settingsPlugins: Array<SettingsPluginType> = getPluginsSync("settings");
 
             settingsPlugins.forEach((sp: SettingsPluginType) => {
                 registerPlugins({
@@ -85,5 +85,5 @@ export default [
                 }
             });
         }
-    }
+    }*/
 ];

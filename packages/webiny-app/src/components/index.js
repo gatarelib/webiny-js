@@ -7,6 +7,7 @@ export { withImageUpload } from "./withImageUpload";
 export { withConfig } from "./withConfig";
 export { withKeyHandler } from "./withKeyHandler";
 export { withUi } from "./withUi";
+export { withPlugins } from "./withPlugins";
 export type { WithDataListProps, SearchParams, WithDataListParams } from "./withDataList";
 export { Image } from "./Image";
 export { default as SingleImageUpload } from "./SingleImageUpload";

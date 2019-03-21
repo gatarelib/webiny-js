@@ -1,9 +1,9 @@
 // @flow
 import React from "react";
 import { css } from "emotion";
-import { renderPlugins, renderPlugin } from "webiny-app/plugins";
 import { Menu } from "webiny-ui/Menu";
 import { List } from "webiny-ui/List";
+import { Plugin, Plugins } from "webiny-app/components/Plugins";
 import { TopAppBarActionItem } from "webiny-ui/TopAppBar";
 
 const menuDialog = css({
@@ -19,11 +19,15 @@ const UserMenu = () => {
                 <Menu
                     className={menuDialog}
                     anchor={"topEnd"}
-                    handle={<menu-handle>{renderPlugin("user-menu-handle")}</menu-handle>}
+                    handle={
+                        <menu-handle>
+                            <Plugin name={"user-menu-handle"}/>
+                        </menu-handle>
+                    }
                 >
                     <List>
-                        {renderPlugin("header-user-menu-user-info")}
-                        {renderPlugins("header-user-menu")}
+                        <Plugin name={"header-user-menu-user-info"}/>
+                        <Plugins type={"header-user-menu"}/>
                     </List>
                 </Menu>
             }

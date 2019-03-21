@@ -2,8 +2,7 @@
 import * as React from "react";
 import { compose } from "recompose";
 import Downshift from "downshift";
-import { getPlugins } from "webiny-plugins";
-import { withRouter, withKeyHandler } from "webiny-app/components";
+import { withRouter, withKeyHandler, withPlugins } from "webiny-app/components";
 import type { GlobalSearch } from "webiny-admin/types";
 import classnames from "classnames";
 import keycode from "keycode";
@@ -30,26 +29,11 @@ type State = {
     active: boolean,
     searchTerm: { previous: string, current: string },
     plugins: {
-        list: Array<GlobalSearch>,
         current: ?GlobalSearch
     }
 };
 
 class SearchBar extends React.Component<*, State> {
-    state = {
-        active: false,
-        searchTerm: {
-            previous: "",
-            current: ""
-        },
-        plugins: {
-            // List of all registered "global-search" plugins.
-            list: getPlugins("global-search"),
-            // Current plugin - set by examining current route and its query params (on construct).
-            current: undefined
-        }
-    };
-
     /**
      * Helps us trigger some of the downshift's methods (eg. clearSelection) and helps us to avoid adding state.
      */
@@ -67,9 +51,18 @@ class SearchBar extends React.Component<*, State> {
      */
     constructor(props) {
         super();
-        this.state.plugins.current = this.state.plugins.list.find(
-            p => p.route === props.router.route.name
-        );
+        this.state = {
+            active: false,
+            searchTerm: {
+                previous: "",
+                current: ""
+            },
+            plugins: {
+                list: props.plugins,
+                // Current plugin - set by examining current route and its query params (on construct).
+                current: props.plugins.find(p => p.route === props.router.route.name)
+            }
+        };
 
         if (this.state.plugins.current) {
             try {
@@ -222,5 +215,6 @@ class SearchBar extends React.Component<*, State> {
 
 export default compose(
     withRouter(),
-    withKeyHandler()
+    withKeyHandler(),
+    withPlugins({ type: "global-search", once: true })
 )(SearchBar);
