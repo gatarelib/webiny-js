@@ -20,7 +20,7 @@ const renderPlugins = ({ plugins, Menu }) => {
 };
 
 export default [
-    /*{
+    {
         type: "webiny-init",
         name: "webiny-init-settings",
         callback() {
@@ -85,5 +85,5 @@ export default [
                 }
             });
         }
-    }*/
+    }
 ];

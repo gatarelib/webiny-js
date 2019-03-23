@@ -32,6 +32,7 @@ const transitionStyles = {
 
 const Wrapper = styled("div")({
     padding: 0,
+    minHeight: 60,
     boxSizing: "border-box",
     ".mdc-tab-content": {
         padding: 15

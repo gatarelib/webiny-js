@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import { TopAppBarPrimary, TopAppBarSection } from "webiny-ui/TopAppBar";
 import { css } from "emotion";
 

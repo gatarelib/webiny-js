@@ -2,7 +2,7 @@
 import React from "react";
 import { pure } from "recompose";
 import { TopAppBar, TopAppBarSection } from "webiny-ui/TopAppBar";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import { css } from "emotion";
 
 const topBar = css({

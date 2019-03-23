@@ -4,7 +4,7 @@ import { i18n } from "webiny-app/i18n";
 import { withSecurity, type WithSecurityPropsType } from "webiny-app-security/components";
 import { ConfirmationDialog } from "webiny-ui/ConfirmationDialog";
 import { Tooltip } from "webiny-ui/Tooltip";
-import { Image } from "webiny-app/components";
+import { Image } from "webiny-app/components/imageUpload";
 import type { WithCrudListProps } from "webiny-admin/components";
 
 import {

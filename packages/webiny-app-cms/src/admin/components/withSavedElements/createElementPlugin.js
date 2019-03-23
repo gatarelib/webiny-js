@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import cloneDeep from "lodash/cloneDeep";
-import { registerPlugins, getPluginsSync } from "webiny-plugins";
+import { registerPlugins, getPluginSync } from "webiny-plugins";
 import Title from "./Title";
 
 type Element = {
@@ -15,7 +15,7 @@ type Element = {
 };
 
 export default (el: Element) => {
-    const rootPlugin = getPluginsSync(el.content.type);
+    const rootPlugin = getPluginSync(el.content.type);
     if (!rootPlugin) {
         return;
     }

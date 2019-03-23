@@ -2,7 +2,7 @@
 import * as React from "react";
 import { compose, withProps } from "recompose";
 import { Query } from "react-apollo";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import { withRouter } from "webiny-app/components";
 import type { WithRouterProps } from "webiny-app/components";
 import styled from "react-emotion";

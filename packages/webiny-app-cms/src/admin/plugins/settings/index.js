@@ -1,10 +1,20 @@
 // @flow
 import * as React from "react";
-import CmsSettings from "./components/CmsSettings";
-import GeneralSettings from "./components/generalSettings/GeneralSettings";
+import Loadable from "react-loadable";
 import type { SettingsPluginType } from "webiny-admin/types";
 import { hasRoles } from "webiny-app-security";
 import { SecureRoute } from "webiny-app-security/components";
+import { CircularProgress } from "webiny-ui/Progress";
+
+const CmsSettings = Loadable({
+    loader: () => import("./components/CmsSettings"),
+    loading: CircularProgress
+});
+
+const GeneralSettings = Loadable({
+    loader: () => import("./components/generalSettings/GeneralSettings"),
+    loading: CircularProgress
+});
 
 export default ([
     {

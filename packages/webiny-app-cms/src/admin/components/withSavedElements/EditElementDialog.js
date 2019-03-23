@@ -2,7 +2,7 @@
 import React from "react";
 import { compose, shouldUpdate } from "recompose";
 import { css } from "emotion";
-import { Plugin } from "webiny-app/components/Plugins";
+import { Plugin } from "webiny-app/components/plugins";
 import {
     Dialog,
     DialogHeader,

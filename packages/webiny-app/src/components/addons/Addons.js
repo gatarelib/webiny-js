@@ -7,7 +7,7 @@ type State = {
     ready: boolean
 };
 
-export default class Addons extends React.Component<Props, State> {
+export class Addons extends React.Component<Props, State> {
     settings = {};
     plugins = [];
 

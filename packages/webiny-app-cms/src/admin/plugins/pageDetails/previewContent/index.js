@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import type { CmsPageDetailsPluginType, WithPageDetailsProps } from "webiny-app-cms/types";
 import { Tab } from "webiny-ui/Tabs";
 import styled from "react-emotion";

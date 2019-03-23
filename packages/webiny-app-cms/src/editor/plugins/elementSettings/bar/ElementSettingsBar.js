@@ -1,8 +1,6 @@
-// TODO: TU SAM STAO! Tu ce mozda trebati napraviti <Plugins> da supporta `names` objekt, da mozes loadati random pluginove!!!!!
-
 // @flow
 import React from "react";
-import { Plugin } from "webiny-app/components/Plugins";
+import { Plugin } from "webiny-app/components/plugins";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, lifecycle, pure } from "recompose";
 import { TopAppBarSecondary, TopAppBarSection } from "webiny-ui/TopAppBar";

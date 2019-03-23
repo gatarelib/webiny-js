@@ -10,7 +10,7 @@ import _ from "lodash";
 import styled from "react-emotion";
 import { css } from "emotion";
 import { withUi, withPlugins } from "webiny-app/components";
-import { Plugin } from "webiny-app/components/Plugins";
+import { Plugin } from "webiny-app/components/plugins";
 import { Typography } from "webiny-ui/Typography";
 import { Transition } from "react-transition-group";
 import Menu from "./Menu";

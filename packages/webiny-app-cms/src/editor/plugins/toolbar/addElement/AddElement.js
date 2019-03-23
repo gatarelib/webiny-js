@@ -65,7 +65,7 @@ class AddElement extends React.Component<Props, State> {
 
         this.state = {
             group: props.plugins.groups[0].name
-        }
+        };
     }
 
     getGroupElements(group: string) {
@@ -73,7 +73,7 @@ class AddElement extends React.Component<Props, State> {
             (el: ElementPluginType) => el.toolbar && el.toolbar.group === group
         );
     }
-    
+
     renderDraggable = (element, plugin) => {
         const { name } = plugin;
         const { dragStart, deactivatePlugin, dragEnd } = this.props;
@@ -205,7 +205,6 @@ class AddElement extends React.Component<Props, State> {
 }
 
 export default compose(
-    withPlugins({ type: { elements: "cms-element", groups: "cms-element-group" } }),
     connect(
         state => {
             const getParams = getActivePluginParams("cms-toolbar-add-element");
@@ -229,5 +228,8 @@ export default compose(
                 el.classList.remove("cms-editor-dragging");
             }
         }
+    }),
+    withPlugins({
+        type: { elements: "cms-element", groups: "cms-element-group" }
     })
 )(AddElement);

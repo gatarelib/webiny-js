@@ -5,7 +5,7 @@ import { compose, withHandlers } from "recompose";
 import { cloneDeep } from "lodash";
 import { merge } from "dot-prop-immutable";
 import { withPlugins } from "webiny-app/components";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import { isPluginActive } from "webiny-app-cms/editor/selectors";
 import { withActiveElement, withKeyHandler } from "webiny-app-cms/editor/components";
 import { css } from "emotion";

@@ -3,7 +3,7 @@ import * as React from "react";
 import invariant from "invariant";
 import type { PluginType } from "webiny-plugins/types";
 import { get } from "lodash";
-import { Plugin } from "webiny-app/components/Plugins";
+import { Plugin } from "webiny-app/components/plugins";
 
 type ImageProps = Object & {
     src: string,

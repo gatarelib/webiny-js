@@ -2,7 +2,7 @@
 import React from "react";
 import { Avatar } from "webiny-ui/Avatar";
 import { withSecurity, type WithSecurityPropsType } from "webiny-app-security/components";
-import { Image } from "webiny-app/components";
+import { Image } from "webiny-app/components/imageUpload";
 
 class UserAvatar extends React.Component<WithSecurityPropsType> {
     render() {

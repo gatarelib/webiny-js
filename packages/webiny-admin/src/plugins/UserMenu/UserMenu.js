@@ -3,7 +3,7 @@ import React from "react";
 import { css } from "emotion";
 import { Menu } from "webiny-ui/Menu";
 import { List } from "webiny-ui/List";
-import { Plugin, Plugins } from "webiny-app/components/Plugins";
+import { Plugin, Plugins } from "webiny-app/components/plugins";
 import { TopAppBarActionItem } from "webiny-ui/TopAppBar";
 
 const menuDialog = css({

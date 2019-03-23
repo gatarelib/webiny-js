@@ -3,7 +3,7 @@ import React from "react";
 import { css } from "emotion";
 import styled from "react-emotion";
 import uniqid from "uniqid";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import { Grid, Cell } from "webiny-ui/Grid";
 import { Icon } from "webiny-ui/Icon";
 import { Menu } from "webiny-ui/Menu";

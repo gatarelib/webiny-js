@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import * as React from "react";
 import shortid from "shortid";
 import isHotkey from "is-hotkey";
 const keyStack = {};
@@ -10,7 +10,7 @@ const filter = ["TEXTAREA", "INPUT"];
 const setupListener = () => {
     if (!listener) {
         document.body &&
-            document.body.addEventListener("keydown", e => {
+            document.body.addEventListener("keydown", (e: any) => {
                 // We ignore all keyboard events coming from within `slateEditor` element and inputs.
                 if (e.srcElement.dataset.slateEditor || filter.includes(e.srcElement.nodeName)) {
                     return;
@@ -43,7 +43,7 @@ const removeKeyHandler = (id, key) => {
 };
 
 export function withKeyHandler() {
-    return function decorator(Component) {
+    return function decorator(Component: React.ComponentType<*>) {
         const id = shortid.generate();
 
         const keyProps = {

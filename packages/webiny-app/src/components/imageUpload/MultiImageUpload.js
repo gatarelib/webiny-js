@@ -1,13 +1,13 @@
 // @flow
 import * as React from "react";
 import { Image } from "./Image";
-import { MultiImageUpload } from "webiny-ui/ImageUpload";
+import { MultiImageUpload as UiImageUpload } from "webiny-ui/ImageUpload";
 
 type Props = Object;
 
-export default ({ imagePreviewProps, ...multiImageUploadProps }: Props) => {
+export const MultiImageUpload = ({ imagePreviewProps, ...multiImageUploadProps }: Props) => {
     return (
-        <MultiImageUpload
+        <UiImageUpload
             renderImagePreview={(renderImageProps: Object) => {
                 return (
                     <Image

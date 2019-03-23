@@ -2,7 +2,7 @@
 import * as React from "react";
 import { compose, withHandlers } from "recompose";
 import { omit, omitBy, isNull } from "lodash";
-import { Plugin } from "webiny-app/components/Plugins";
+import { Plugin } from "webiny-app/components/plugins";
 import findObject from "./findObject";
 import uniqid from "uniqid";
 

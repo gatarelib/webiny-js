@@ -2,6 +2,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { compose, withHandlers } from "recompose";
+import { withPlugins } from "webiny-app/components";
 import { Editor as CmsEditor } from "webiny-app-cms/editor";
 import { createElement } from "webiny-app-cms/editor/utils";
 import { redux } from "webiny-app-cms/editor/redux";

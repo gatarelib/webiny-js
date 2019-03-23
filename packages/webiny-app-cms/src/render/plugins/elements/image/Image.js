@@ -2,7 +2,7 @@
 import React from "react";
 import { get } from "lodash";
 import { ElementRoot } from "webiny-app-cms/render/components/ElementRoot";
-import { Image as WebinyImage } from "webiny-app/components";
+import { Image as WebinyImage } from "webiny-app/components/imageUpload";
 
 const Link = ({ link, children }: Object) => {
     if (link && link.href) {

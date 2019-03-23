@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { css } from "emotion";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import { type WithPageDetailsProps } from "webiny-app-cms/admin/components";
 import { Typography } from "webiny-ui/Typography";
 import { Grid, Cell } from "webiny-ui/Grid";

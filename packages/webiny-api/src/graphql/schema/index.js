@@ -60,8 +60,8 @@ const mapSourcesToExecutableSchemas = (sources: Array<Object>) => {
 /**
  * @return {schema, context}
  */
-export function prepareSchema() {
-    const dataSources = getPlugins("graphql");
+export async function prepareSchema() {
+    const dataSources = await getPlugins("graphql");
     const schemas = mapSourcesToExecutableSchemas(dataSources);
 
     const sourcesWithStitching = dataSources.filter(source => source.stitching);

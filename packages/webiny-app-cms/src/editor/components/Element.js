@@ -5,7 +5,7 @@ import { compose, pure, withHandlers, withProps, setDisplayName } from "recompos
 import { connect } from "webiny-app-cms/editor/redux";
 import isEqual from "lodash/isEqual";
 import { getPluginSync } from "webiny-plugins";
-import { Plugins } from "webiny-app/components/Plugins";
+import { Plugins } from "webiny-app/components/plugins";
 import {
     dragStart,
     dragEnd,

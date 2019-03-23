@@ -1,7 +1,7 @@
 // @flow
 import * as React from "react";
 import { hasScopes, hasRoles } from "webiny-app-security";
-import { Plugin } from "webiny-app/components/Plugins";
+import { Plugin } from "webiny-app/components/plugins";
 
 export default ({ children, scopes, roles }: Object): React.Node => {
     const checks = {
