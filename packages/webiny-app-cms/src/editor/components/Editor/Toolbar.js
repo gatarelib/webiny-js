@@ -6,7 +6,7 @@ import { css } from "emotion";
 import { isEqual } from "lodash";
 import { compose, lifecycle } from "recompose";
 import { Drawer, DrawerContent } from "webiny-ui/Drawer";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
 import { deactivatePlugin } from "webiny-app-cms/editor/actions";
 import { getActivePlugins } from "webiny-app-cms/editor/selectors";
@@ -96,14 +96,11 @@ const renderPlugin = (plugin: Object) => {
     return React.cloneElement(plugin.renderAction(), { key: plugin.name });
 };
 
-const Toolbar = ({ activePluginsTop }: Object) => {
-    const actionsTop = getPlugins("cms-toolbar-top");
-    const actionsBottom = getPlugins("cms-toolbar-bottom");
-
+const Toolbar = ({ activePluginsTop, plugins }: Object) => {
     return (
         <React.Fragment>
             <ToolbarDrawerContainer>
-                {actionsTop
+                {plugins.top
                     .filter(plugin => typeof plugin.renderDrawer === "function")
                     .map(plugin => (
                         <ToolbarDrawer
@@ -117,20 +114,23 @@ const Toolbar = ({ activePluginsTop }: Object) => {
             </ToolbarDrawerContainer>
             <ToolbarContainer>
                 <ToolbarActions>
-                    <div>{actionsTop.map(renderPlugin)}</div>
-                    <div>{actionsBottom.map(renderPlugin)}</div>
+                    <div>{plugins.top.map(renderPlugin)}</div>
+                    <div>{plugins.bottom.map(renderPlugin)}</div>
                 </ToolbarActions>
             </ToolbarContainer>
         </React.Fragment>
     );
 };
 
-export default connect(
-    state => ({
-        activePluginsTop: getActivePlugins("cms-toolbar-top")(state).map(pl => pl.name),
-        activePluginsBottom: getActivePlugins("cms-toolbar-bottom")(state).map(pl => pl.name)
-    }),
-    null,
-    null,
-    { areStatePropsEqual: isEqual }
+export default compose(
+    withPlugins({ type: { top: "cms-toolbar-top", bottom: "cms-toolbar-bottom" } }),
+    connect(
+        state => ({
+            activePluginsTop: getActivePlugins("cms-toolbar-top")(state).map(pl => pl.name),
+            activePluginsBottom: getActivePlugins("cms-toolbar-bottom")(state).map(pl => pl.name)
+        }),
+        null,
+        null,
+        { areStatePropsEqual: isEqual }
+    ),
 )(Toolbar);

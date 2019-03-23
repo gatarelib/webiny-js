@@ -2,7 +2,7 @@
 import React from "react";
 import { compose, shouldUpdate } from "recompose";
 import { css } from "emotion";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 import {
     Dialog,
     DialogHeader,
@@ -48,39 +48,43 @@ type Props = {
 const EditElementDialog = (props: Props) => {
     const { open, onClose, onSubmit, plugin: pluginName } = props;
 
-    const plugin = getPlugin(pluginName);
-
     return (
         <Dialog open={open} onClose={onClose} className={narrowDialog}>
-            {plugin && (
-                <Form onSubmit={onSubmit} data={plugin}>
-                    {({ submit, Bind }) => (
-                        <React.Fragment>
-                            <DialogHeader>
-                                <DialogHeaderTitle>Update {plugin.title}</DialogHeaderTitle>
-                            </DialogHeader>
-                            <DialogBody>
-                                <Grid>
-                                    <Cell span={12}>
-                                        <Bind name={"title"} validators={"required"}>
-                                            <Input label={"Name"} autoFocus />
-                                        </Bind>
-                                    </Cell>
-                                </Grid>
-                                <Grid>
-                                    <Cell span={12}>
-                                        <PreviewBox>{plugin.toolbar.preview()}</PreviewBox>
-                                    </Cell>
-                                </Grid>
-                            </DialogBody>
-                            <DialogFooter>
-                                <DialogCancel>Cancel</DialogCancel>
-                                <DialogFooterButton onClick={submit}>Save</DialogFooterButton>
-                            </DialogFooter>
-                        </React.Fragment>
-                    )}
-                </Form>
-            )}
+            <Plugin name={pluginName}>
+                {({ plugin }) =>
+                    !plugin ? null : (
+                        <Form onSubmit={onSubmit} data={plugin}>
+                            {({ submit, Bind }) => (
+                                <React.Fragment>
+                                    <DialogHeader>
+                                        <DialogHeaderTitle>Update {plugin.title}</DialogHeaderTitle>
+                                    </DialogHeader>
+                                    <DialogBody>
+                                        <Grid>
+                                            <Cell span={12}>
+                                                <Bind name={"title"} validators={"required"}>
+                                                    <Input label={"Name"} autoFocus />
+                                                </Bind>
+                                            </Cell>
+                                        </Grid>
+                                        <Grid>
+                                            <Cell span={12}>
+                                                <PreviewBox>{plugin.toolbar.preview()}</PreviewBox>
+                                            </Cell>
+                                        </Grid>
+                                    </DialogBody>
+                                    <DialogFooter>
+                                        <DialogCancel>Cancel</DialogCancel>
+                                        <DialogFooterButton onClick={submit}>
+                                            Save
+                                        </DialogFooterButton>
+                                    </DialogFooter>
+                                </React.Fragment>
+                            )}
+                        </Form>
+                    )
+                }
+            </Plugin>
         </Dialog>
     );
 };

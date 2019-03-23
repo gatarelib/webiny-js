@@ -50,6 +50,10 @@ export const getPluginsSync = (type: string): Array<PluginType> => {
     return values.filter((plugin: PluginType) => (type ? plugin.type === type : true));
 };
 
+export const getPluginSync = (name: string): PluginType => {
+    return __plugins[name];
+};
+
 export const getPlugin = async (name: string): Promise<PluginType | null> => {
     if (!__plugins[name]) {
         return null;
@@ -57,7 +61,7 @@ export const getPlugin = async (name: string): Promise<PluginType | null> => {
 
     if (!__loaded[name]) {
         const loaded = await __plugins[name].factory();
-        __plugins[name] = { ...__plugins[name], ...loaded };
+        __plugins[name] = { ...__plugins[name], ...(loaded || {}) };
         __loaded[name] = true;
     }
     return __plugins[name];

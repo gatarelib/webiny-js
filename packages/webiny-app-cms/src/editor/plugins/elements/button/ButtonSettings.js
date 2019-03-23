@@ -1,7 +1,7 @@
 // @flow
 import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers } from "recompose";
 import { set } from "dot-prop-immutable";
@@ -77,35 +77,32 @@ const ButtonSettings = ({
     );
 };
 
-let icons;
-const getIcons = () => {
-    if (!icons) {
-        icons = getPlugins("cms-icons").reduce((icons: Array<Object>, pl: Object) => {
-            return icons.concat(pl.getIcons());
-        }, []);
-    }
-    return icons;
-};
-
-const getSvg = (id: Array<string>, props: Object) => {
-    if (!props.width) {
-        props.width = 50;
-    }
-    const icon = getIcons().find(ic => isEqual(ic.id, id));
-    if (!icon) {
-        return null;
-    }
-    return renderToStaticMarkup(React.cloneElement(icon.svg, props));
-};
-
 export default compose(
     connect(
         state => ({ element: getActiveElement(state) }),
         { updateElement }
     ),
     withCms(),
+    withPlugins({
+        type: "cms-icons",
+        prop: "icons",
+        format: plugins => {
+            return plugins.reduce((icons: Array<Object>, pl: Object) => {
+                return icons.concat(pl.getIcons());
+            }, []);
+        }
+    }),
     withHandlers({
-        updateData: ({ updateElement, element }) => {
+        getSvg: ({ icons }) => (id, props) => {
+            if (!props.width) {
+                props.width = 50;
+            }
+            const icon = icons.find(ic => isEqual(ic.id, id));
+            return icon ? renderToStaticMarkup(React.cloneElement(icon.svg, props)) : null;
+        }
+    }),
+    withHandlers({
+        updateData: ({ updateElement, element, getSvg }) => {
             const historyUpdated = {};
 
             return (name, value, history = true) => {

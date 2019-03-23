@@ -7,6 +7,7 @@ import { css } from "emotion";
 import { compose } from "recompose";
 import { getPlugins } from "webiny-plugins";
 import { withCms } from "webiny-app-cms/context";
+import { withPlugins } from "webiny-app/components";
 import { getContent, isPluginActive, getPage } from "webiny-app-cms/editor/selectors";
 import Element from "webiny-app-cms/editor/components/Element";
 import { Elevation } from "webiny-ui/Elevation";
@@ -36,8 +37,7 @@ const BaseContainer = styled("div")({
     margin: "0 auto"
 });
 
-const Content = ({ rootElement, cms: { theme }, renderLayout, layout }) => {
-    const plugins = getPlugins("cms-editor-content");
+const Content = ({ plugins, rootElement, cms: { theme }, renderLayout, layout }) => {
     const themeLayout = theme.layouts.find(l => l.name === layout);
 
     if (renderLayout && !themeLayout) {
@@ -68,5 +68,6 @@ const stateToProps = state => ({
 
 export default compose(
     connect(stateToProps),
-    withCms()
+    withCms(),
+    withPlugins({ type: "cms-editor-content" })
 )(Content);

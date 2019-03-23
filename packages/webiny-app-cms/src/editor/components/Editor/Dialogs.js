@@ -1,16 +1,16 @@
 // @flow
 import React from "react";
-import { pure } from "recompose";
+import { compose, pure } from "recompose";
+import { withPlugins } from "webiny-app/components";
 import styled from "react-emotion";
-import { getPlugins } from "webiny-plugins";
 
 const DialogsContainer = styled("div")({
     position: "fixed",
     zIndex: 5
 });
 
-const Dialogs = pure(() => {
-    const actions = [...getPlugins("cms-toolbar-top"), ...getPlugins("cms-toolbar-bottom")];
+const Dialogs = pure(({ plugins }) => {
+    const actions = [...plugins.top, ...plugins.bottom];
 
     return (
         <DialogsContainer data-type={"dialogs"}>
@@ -23,4 +23,6 @@ const Dialogs = pure(() => {
     );
 });
 
-export default Dialogs;
+export default compose(
+    withPlugins({ type: { top: "cms-toolbar-top", bottom: "cms-toolbar-bottom" } })
+)(Dialogs);

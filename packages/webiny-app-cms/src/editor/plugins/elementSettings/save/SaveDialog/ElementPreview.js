@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import domToImage from "./domToImage";
 
 export default class ElementPreview extends React.Component<*> {
@@ -14,7 +14,7 @@ export default class ElementPreview extends React.Component<*> {
     }
 
     replaceContent(element: Object, doc: Document) {
-        const pl = getPlugin(element.type);
+        const pl = getPluginSync(element.type);
         if (!pl) {
             return doc;
         }

@@ -2,7 +2,7 @@
 import * as React from "react";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers, withProps } from "recompose";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 import { set } from "dot-prop-immutable";
 import { updateElement } from "webiny-app-cms/editor/actions";
 import { getActiveElement } from "webiny-app-cms/editor/selectors";
@@ -19,12 +19,15 @@ const icons = {
 };
 
 const VerticalAlignAction = ({ element, children, alignElement, align }: Object) => {
-    const plugin = getPlugin(element.type);
-    if (!plugin) {
-        return null;
-    }
-
-    return React.cloneElement(children, { onClick: alignElement, icon: icons[align] });
+    return (
+        <Plugin name={element.type}>
+            {({ plugin }) =>
+                !plugin
+                    ? null
+                    : React.cloneElement(children, { onClick: alignElement, icon: icons[align] })
+            }
+        </Plugin>
+    );
 };
 
 export default compose(

@@ -1,34 +1,50 @@
 import * as React from "react";
-import Loadable from "react-loadable";
 import invariant from "invariant";
 import { getPlugin, getPlugins } from "webiny-plugins";
 import { CircularProgress } from "webiny-ui/Progress";
 
 const voidLoading = () => null;
 
-export const Plugin = ({ name, children, loading, params }) => {
-    if (typeof loading === "undefined") {
-        loading = CircularProgress;
+class LazyPlugin extends React.Component {
+    state = {
+        plugin: null
+    };
+
+    async componentDidMount() {
+        const plugin = await getPlugin(this.props.name);
+        this.setState({ plugin });
     }
 
-    const Component = Loadable({
-        loader: async () => getPlugin(name),
-        loading: loading ? loading : voidLoading,
-        render(plugin) {
-            if (typeof children === "function") {
-                return children({ plugin });
-            }
-
-            return plugin["render"](params);
+    render() {
+        let { plugin } = this.state;
+        if (!plugin) {
+            return <CircularProgress />;
+        } else {
+            return this.props.render(plugin);
         }
-    });
+    }
+}
 
-    return <Component />;
+export const Plugin = ({ name, children, loading, params }) => {
+    return (
+        <LazyPlugin
+            name={name}
+            render={plugin => {
+                if (typeof children === "function") {
+                    return children({ plugin });
+                }
+
+                return plugin["render"](params);
+            }}
+        />
+    );
 };
 
-const loadedPlugins = {};
+const renderPlugins = ({ plugins, children, params, filter }) => {
+    if (typeof filter === "function") {
+        plugins = plugins.filter(filter);
+    }
 
-const renderPlugins = ({ plugins, children, params }) => {
     if (typeof children === "function") {
         return children({ plugins });
     }
@@ -37,32 +53,68 @@ const renderPlugins = ({ plugins, children, params }) => {
         <>
             {plugins.map(plugin => {
                 const content = plugin["render"](params);
-                return React.cloneElement(content, { key: plugin.name });
+                return content ? React.cloneElement(content, { key: plugin.name }) : null;
             })}
         </>
     );
 };
 
-export const Plugins = ({ type, children, loading, params, once = true }) => {
-    if (typeof loading === "undefined") {
-        loading = CircularProgress;
+class LazyPlugins extends React.Component {
+    static loaders = {};
+
+    state = {
+        plugins: null,
+        loading: false
+    };
+
+    componentDidMount() {
+        this.loadPlugins();
     }
 
-    if (once && loadedPlugins[type]) {
-        return renderPlugins({ plugins: loadedPlugins[type], children, params });
+    async loadPlugins() {
+        if (this.state.loading) {
+            return;
+        }
+
+        this.setState({ loading: true });
+        const { type } = this.props;
+        const cacheKey = typeof type === "string" ? type : JSON.stringify(Object.values(type));
+
+        if (!LazyPlugins.loaders[cacheKey]) {
+            LazyPlugins.loaders[cacheKey] = getPlugins(type).then(plugins => {
+                console.log("Loaded", cacheKey);
+                LazyPlugins.loaders[cacheKey] = null;
+                return plugins;
+            });
+        } else {
+            console.log("Reusing loader",cacheKey);
+        }
+        const plugins = await LazyPlugins.loaders[cacheKey];
+        this.setState({ plugins, loading: false });
     }
 
+    render() {
+        let { plugins } = this.state;
+        if (!plugins) {
+            return <CircularProgress />;
+        } else {
+            return this.props.render(plugins);
+        }
+    }
+}
+
+export const Plugins = ({ type, children, loading, params, filter, once = true }) => {
     invariant(type, "Plugins component requires a `type` prop!");
 
-    const Component = Loadable({
-        loader: async () => {
-            return (loadedPlugins[type] = await getPlugins(type));
-        },
-        loading: loading ? loading : voidLoading,
-        render(plugins) {
-            return renderPlugins({ plugins, children, params });
-        }
-    });
+    console.log("Plugins", type);
 
-    return <Component />;
+    return (
+        <LazyPlugins
+            once={once}
+            type={type}
+            render={plugins => {
+                return renderPlugins({ plugins, children, params, filter });
+            }}
+        />
+    );
 };

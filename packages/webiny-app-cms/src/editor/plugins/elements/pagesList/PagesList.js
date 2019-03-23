@@ -1,14 +1,13 @@
 // @flow
 import * as React from "react";
-import { pure } from "recompose";
+import { compose, pure } from "recompose";
 import { Query } from "react-apollo";
 import { withCms } from "webiny-app-cms/context";
 import { loadPages } from "./graphql";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 
-const PagesList = pure(({ data = {}, cms: { theme } }: Object = {}) => {
+const PagesList = pure(({ components, data = {}, cms: { theme } }: Object = {}) => {
     const { component, ...vars } = data;
-    const components = getPlugins("cms-element-pages-list-component");
     const pageList = components.find(cmp => cmp.name === component);
 
     if (!pageList) {
@@ -74,4 +73,7 @@ const PagesList = pure(({ data = {}, cms: { theme } }: Object = {}) => {
     );
 });
 
-export default withCms()(PagesList);
+export default compose(
+    withCms(),
+    withPlugins({ type: "cms-element-pages-list-component", prop: "components" })
+)(PagesList);

@@ -4,8 +4,8 @@ import { Transition } from "react-transition-group";
 import { compose, pure, withHandlers, withProps, setDisplayName } from "recompose";
 import { connect } from "webiny-app-cms/editor/redux";
 import isEqual from "lodash/isEqual";
-import { getPlugin } from "webiny-plugins";
-import { renderPlugins } from "webiny-app/plugins";
+import { getPluginSync } from "webiny-plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 import {
     dragStart,
     dragEnd,
@@ -100,7 +100,7 @@ export default compose(
         { areStatePropsEqual: isEqual }
     ),
     withProps(({ element }) => ({
-        plugin: element ? getPlugin(element.type) : null
+        plugin: element ? getPluginSync(element.type) : null
     })),
     withHandlers({
         beginDrag: ({ plugin, element, dragStart }) => () => {
@@ -138,7 +138,7 @@ export default compose(
                 <div className={"type " + typeStyle}>
                     <div className="background" onClick={onClick} />
                     <div className={"element-holder"} onClick={onClick}>
-                        {renderPlugins("cms-element-action", { element, plugin })}
+                        <Plugins type={"cms-element-action"} params={{ element, plugin }} />
                         <span>{plugin.name.replace("cms-element-", "")}</span>
                     </div>
                 </div>

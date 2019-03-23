@@ -3,7 +3,7 @@ import React from "react";
 import { css } from "emotion";
 import styled from "react-emotion";
 import uniqid from "uniqid";
-import { getPlugins } from "webiny-plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 import { Grid, Cell } from "webiny-ui/Grid";
 import { Icon } from "webiny-ui/Icon";
 import { Menu } from "webiny-ui/Menu";
@@ -74,7 +74,6 @@ class MenuItems extends React.Component<Props, State> {
     render() {
         const { value: items, onChange } = this.props;
         const { currentMenuItem } = this.state;
-        const plugins = getPlugins("cms-menu-item");
 
         return (
             <>
@@ -103,18 +102,22 @@ class MenuItems extends React.Component<Props, State> {
                                             anchor={"topEnd"}
                                         >
                                             <List className={menuItems}>
-                                                {plugins.map(pl => (
-                                                    <ListItem
-                                                        key={pl.name}
-                                                        onClick={() => this.addItem(pl)}
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <ListItemGraphic>
-                                                            <Icon icon={pl.icon} />
-                                                        </ListItemGraphic>
-                                                        {pl.title}
-                                                    </ListItem>
-                                                ))}
+                                                <Plugins type={"cms-menu-item"}>
+                                                    {({ plugins }) =>
+                                                        plugins.map(pl => (
+                                                            <ListItem
+                                                                key={pl.name}
+                                                                onClick={() => this.addItem(pl)}
+                                                                style={{ whiteSpace: "nowrap" }}
+                                                            >
+                                                                <ListItemGraphic>
+                                                                    <Icon icon={pl.icon} />
+                                                                </ListItemGraphic>
+                                                                {pl.title}
+                                                            </ListItem>
+                                                        ))
+                                                    }
+                                                </Plugins>
                                             </List>
                                         </Menu>
                                     </AddMenu>

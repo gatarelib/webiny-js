@@ -3,7 +3,7 @@ import shortid from "shortid";
 import invariant from "invariant";
 import { set } from "dot-prop-immutable";
 import { isPlainObject, omit } from "lodash";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import type { ElementType } from "webiny-app-cms/types";
 
 export const updateChildPaths = (element: ElementType) => {
@@ -66,7 +66,7 @@ export const createColumn = (options: Object = {}, parent: ?ElementType) => {
 };
 
 export const createElement = (type: string, options: Object = {}, parent: ?ElementType) => {
-    const plugin = getPlugin(type);
+    const plugin = getPluginSync(type);
 
     invariant(plugin, `Missing element plugin "${type}"!`);
 

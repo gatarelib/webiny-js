@@ -1,11 +1,11 @@
 // @flow
 import _ from "lodash";
 import invariant from "invariant";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import type { ElementType, State } from "webiny-app-cms/types";
 
 const getPluginType = (name: string) => {
-    const plugin = getPlugin(name);
+    const plugin = getPluginSync(name);
     return plugin ? plugin.type : null;
 };
 
@@ -35,7 +35,7 @@ export const getContent = (state: State): Object => {
         return page.content;
     }
 
-    const document = getPlugin("cms-element-document");
+    const document = getPluginSync("cms-element-document");
     invariant(document, `"cms-element-document" plugin must exist for CMS to work!`);
     return document.create();
 };

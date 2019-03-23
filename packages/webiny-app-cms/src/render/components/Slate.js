@@ -1,15 +1,14 @@
 // @flow
 import React from "react";
+import { compose } from "recompose";
 import { Editor } from "slate-react";
 import { Value } from "slate";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { withCms } from "webiny-app-cms/context";
 
 class SlateEditor extends React.Component<*, *> {
     constructor(props) {
         super();
-
-        this.plugins = getPlugins("cms-render-slate-editor").map(pl => pl.slate);
 
         this.state = {
             value: Value.fromJSON(props.value)
@@ -22,7 +21,7 @@ class SlateEditor extends React.Component<*, *> {
                 readOnly={true}
                 autoCorrect={false}
                 spellCheck={false}
-                plugins={this.plugins}
+                plugins={this.props.plugins}
                 value={this.state.value}
                 theme={this.props.cms.theme}
             />
@@ -30,4 +29,7 @@ class SlateEditor extends React.Component<*, *> {
     }
 }
 
-export default withCms()(SlateEditor);
+export default compose(
+    withCms(),
+    withPlugins({ type: "cms-render-slate-editor", format: plugins => plugins.map(pl => pl.slate) })
+)(SlateEditor);

@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { renderPlugins } from "webiny-app/plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 import type { CmsPageDetailsPluginType, WithPageDetailsProps } from "webiny-app-cms/types";
 import { Tabs } from "webiny-ui/Tabs";
 
@@ -9,13 +9,17 @@ export default ({
     type: "cms-page-details",
     render({ pageDetails, ...rest }: WithPageDetailsProps) {
         return (
-            <Tabs>
-                {renderPlugins(
-                    "cms-page-details-revision-content",
-                    { pageDetails, ...rest },
-                    { wrapper: false }
+            <Plugins type={"cms-page-details-revision-content"}>
+                {({ plugins }) => (
+                    <Tabs>
+                        {plugins.map(pl =>
+                            React.cloneElement(pl.render({ pageDetails, ...rest }), {
+                                key: pl.name
+                            })
+                        )}
+                    </Tabs>
                 )}
-            </Tabs>
+            </Plugins>
         );
     }
 }: CmsPageDetailsPluginType);

@@ -4,8 +4,8 @@ import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers } from "recompose";
 import { cloneDeep } from "lodash";
 import { merge } from "dot-prop-immutable";
-import { getPlugins } from "webiny-plugins";
-import { renderPlugins } from "webiny-app/plugins";
+import { withPlugins } from "webiny-app/components";
+import { Plugins } from "webiny-app/components/Plugins";
 import { isPluginActive } from "webiny-app-cms/editor/selectors";
 import { withActiveElement, withKeyHandler } from "webiny-app-cms/editor/components";
 import { css } from "emotion";
@@ -60,13 +60,20 @@ class AdvancedSettings extends React.Component<Props> {
                     {({ submit, Bind, data }) => (
                         <React.Fragment>
                             <DialogBody className={dialogBody}>
-                                <Tabs>
-                                    {renderPlugins(
-                                        "cms-element-advanced-settings",
-                                        { Bind, data },
-                                        { wrapper: false, filter: pl => pl.element === type }
+                                <Plugins
+                                    type={"cms-element-advanced-settings"}
+                                    filter={pl => pl.element === type}
+                                >
+                                    {({ plugins }) => (
+                                        <Tabs>
+                                            {plugins.map(pl =>
+                                                React.cloneElement(pl.render({ Bind, data }), {
+                                                    key: pl.name
+                                                })
+                                            )}
+                                        </Tabs>
                                     )}
-                                </Tabs>
+                                </Plugins>
                             </DialogBody>
                             <DialogFooter>
                                 <DialogCancel>Cancel</DialogCancel>
@@ -94,18 +101,20 @@ export default compose(
             deactivatePlugin({ name: "cms-element-settings-advanced" });
         }
     }),
+    withPlugins({
+        type: "cms-element-advanced-settings"
+    }),
     withHandlers({
-        onSubmit: ({ element, updateElement, closeDialog }) => (formData: Object) => {
+        onSubmit: ({ element, updateElement, closeDialog, plugins }) => (formData: Object) => {
             // Get element settings plugins
-            const plugins = getPlugins("cms-element-advanced-settings").filter(
-                pl => pl.element === element.type
-            );
-            formData = plugins.reduce((formData, pl) => {
-                if (pl.onSave) {
-                    return pl.onSave(formData);
-                }
-                return formData;
-            }, formData);
+            formData = plugins
+                .filter(pl => pl.element === element.type)
+                .reduce((formData, pl) => {
+                    if (pl.onSave) {
+                        return pl.onSave(formData);
+                    }
+                    return formData;
+                }, formData);
 
             updateElement({
                 element: merge(element, "data", formData)

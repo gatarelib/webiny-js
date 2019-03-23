@@ -2,7 +2,7 @@
 import * as React from "react";
 import { compose, withProps } from "recompose";
 import { Query } from "react-apollo";
-import { renderPlugins } from "webiny-app/plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 import { withRouter } from "webiny-app/components";
 import type { WithRouterProps } from "webiny-app/components";
 import styled from "react-emotion";
@@ -85,10 +85,10 @@ const PageDetails = ({ pageId, router, showSnackbar }: Props) => {
                                     <PageDetailsConsumer>
                                         {pageDetails => (
                                             <React.Fragment>
-                                                {renderPlugins("cms-page-details", {
-                                                    pageDetails,
-                                                    loading
-                                                })}
+                                                <Plugins
+                                                    type={"cms-page-details"}
+                                                    params={{ pageDetails, loading }}
+                                                />
                                             </React.Fragment>
                                         )}
                                     </PageDetailsConsumer>

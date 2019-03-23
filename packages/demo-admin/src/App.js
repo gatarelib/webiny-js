@@ -16,7 +16,7 @@ registerPlugins(plugins);
 
 const App = () => {
     return (
-        <Webiny config={config}>
+        <Webiny config={config} plugins={plugins}>
             {({ router }) => (
                 <CmsProvider theme={myTheme} isEditor>
                     <AdminTheme>

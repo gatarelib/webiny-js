@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import styled from "react-emotion";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import { addMiddleware } from "webiny-app-cms/editor/redux";
 import { ELEMENT_CREATED } from "webiny-app-cms/editor/actions";
 import type { PluginType } from "webiny-plugins/types";
@@ -66,7 +66,7 @@ export default (): Array<PluginType> => {
                     }
 
                     // Check the source of the element (could be `saved` element which behaves differently from other elements)
-                    const imagePlugin = getPlugin(source.type);
+                    const imagePlugin = getPluginSync(source.type);
                     if (!imagePlugin) {
                         return;
                     }

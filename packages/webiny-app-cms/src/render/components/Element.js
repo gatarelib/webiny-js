@@ -1,19 +1,20 @@
 //@flow
-import { getPlugins } from "webiny-plugins";
+import { compose } from "recompose";
+import { withPlugins } from "webiny-app/components";
 import { withCms } from "webiny-app-cms/context";
 import type { ElementType } from "webiny-app-cms/types";
 
-declare type ElementProps = {
+declare type ElementProps = Object & {
     element: ElementType,
     cms: Object
 };
 
-const Element = ({ element, cms: { theme } }: ElementProps) => {
+const Element = ({ plugins, element, cms: { theme } }: ElementProps) => {
     if (!element) {
         return null;
     }
 
-    const plugin = getPlugins("cms-render-element").find(pl => pl.element === element.type);
+    const plugin = plugins.find(pl => pl.element === element.type);
 
     if (!plugin) {
         return null;
@@ -22,4 +23,4 @@ const Element = ({ element, cms: { theme } }: ElementProps) => {
     return plugin.render({ theme, element });
 };
 
-export default withCms()(Element);
+export default compose(withCms(), withPlugins({ type: "cms-render-element"}))(Element);

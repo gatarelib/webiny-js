@@ -1,16 +1,19 @@
 // @flow
+import * as React from "react";
 import { compose, withHandlers } from "recompose";
 import { omit, omitBy, isNull } from "lodash";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 import findObject from "./findObject";
 import uniqid from "uniqid";
 
 const MenuItemForm = ({ onSubmit, onCancel, currentMenuItem }: Object) => {
-    const plugin = getPlugin(currentMenuItem.type);
-    if (!plugin) {
-        return null;
-    }
-    return plugin.renderForm({ onSubmit, onCancel, data: currentMenuItem });
+    return (
+        <Plugin name={currentMenuItem.type}>
+            {({ plugin }) =>
+                !plugin ? null : plugin.renderForm({ onSubmit, onCancel, data: currentMenuItem })
+            }
+        </Plugin>
+    );
 };
 
 export default compose(

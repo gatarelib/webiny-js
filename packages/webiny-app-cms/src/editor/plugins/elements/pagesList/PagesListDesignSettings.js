@@ -1,15 +1,14 @@
 // @flow
 import * as React from "react";
+import { compose } from "recompose";
 import { Grid, Cell } from "webiny-ui/Grid";
 import { Input } from "webiny-ui/Input";
 import { Select } from "webiny-ui/Select";
 import { withCms } from "webiny-app-cms/context";
+import { withPlugins } from "webiny-app/components";
 import PagesList from "./PagesList";
-import { getPlugins } from "webiny-plugins";
 
-const PagesListDesignSettings = ({ cms: { theme }, Bind, data }: Object) => {
-    const components = getPlugins("cms-element-pages-list-component");
-
+const PagesListDesignSettings = ({ components, cms: { theme }, Bind, data }: Object) => {
     return (
         <React.Fragment>
             <Grid>
@@ -47,4 +46,7 @@ const PagesListDesignSettings = ({ cms: { theme }, Bind, data }: Object) => {
     );
 };
 
-export default withCms()(PagesListDesignSettings);
+export default compose(
+    withCms(),
+    withPlugins({ type: "cms-element-pages-list-component", prop: "components" })
+)(PagesListDesignSettings);

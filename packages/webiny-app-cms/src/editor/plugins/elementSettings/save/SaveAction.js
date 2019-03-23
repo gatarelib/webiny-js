@@ -4,7 +4,7 @@ import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withState, withHandlers, lifecycle, shouldUpdate } from "recompose";
 import { graphql } from "react-apollo";
 import { cloneDeep } from "lodash";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 import SaveDialog from "./SaveDialog";
 import { withSnackbar } from "webiny-admin/components";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
@@ -33,23 +33,25 @@ const SaveAction = ({
     if (!element) {
         return null;
     }
-    const plugin = getPlugin(element.type);
-    if (!plugin) {
-        return null;
-    }
 
     return (
-        <React.Fragment>
-            <SaveDialog
-                key={element.id}
-                element={element}
-                open={isDialogOpened}
-                onClose={hideDialog}
-                onSubmit={onSubmit}
-                type={element.type === "cms-element-block" ? "block" : "element"}
-            />
-            {React.cloneElement(children, { onClick: showDialog })}
-        </React.Fragment>
+        <Plugin name={element.type}>
+            {({ plugin }) =>
+                !plugin ? null : (
+                    <React.Fragment>
+                        <SaveDialog
+                            key={element.id}
+                            element={element}
+                            open={isDialogOpened}
+                            onClose={hideDialog}
+                            onSubmit={onSubmit}
+                            type={element.type === "cms-element-block" ? "block" : "element"}
+                        />
+                        {React.cloneElement(children, { onClick: showDialog })}
+                    </React.Fragment>
+                )
+            }
+        </Plugin>
     );
 };
 

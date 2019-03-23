@@ -1,15 +1,17 @@
 //@flow
 import * as React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers } from "recompose";
+import { withPlugins } from "webiny-app/components";
 import { Tabs, Tab } from "webiny-ui/Tabs";
 import { get, set } from "dot-prop-immutable";
+import { isEqual } from "lodash";
 import { updateElement } from "webiny-app-cms/editor/actions";
 import { getActiveElement } from "webiny-app-cms/editor/selectors";
 import Input from "webiny-app-cms/editor/plugins/elementSettings/components/Input";
 import ColorPicker from "webiny-app-cms/editor/plugins/elementSettings/components/ColorPicker";
 import IconPicker from "webiny-app-cms/editor/plugins/elementSettings/components/IconPicker";
-import { getSvg } from "./utils";
 
 type Props = {
     element: Object,
@@ -46,8 +48,26 @@ export default compose(
         state => ({ element: getActiveElement(state) }),
         { updateElement }
     ),
+    withPlugins({
+        type: "cms-icons",
+        prop: "icons",
+        format: plugins => {
+            return plugins.reduce((icons: Array<Object>, pl: Object) => {
+                return icons.concat(pl.getIcons());
+            }, []);
+        }
+    }),
     withHandlers({
-        updateSettings: ({ updateElement, element }) => {
+        getSvg: ({ icons }) => (id, props) => {
+            if (!props.width) {
+                props.width = 50;
+            }
+            const icon = icons.find(ic => isEqual(ic.id, id));
+            return icon ? renderToStaticMarkup(React.cloneElement(icon.svg, props)) : null;
+        }
+    }),
+    withHandlers({
+        updateSettings: ({ updateElement, element, getSvg }) => {
             const historyUpdated = {};
 
             return (name, value, history = true) => {

@@ -2,7 +2,7 @@
 import * as React from "react";
 import { css } from "emotion";
 import { compose, withState, withHandlers, withProps } from "recompose";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { Typography } from "webiny-ui/Typography";
 import { Grid } from "react-virtualized";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -83,10 +83,11 @@ const IconPicker = ({ value, renderGrid }: Object) => {
 };
 
 export default compose(
+    withPlugins({ type: "cms-icons"}),
     withState("filter", "setFilter", ""),
-    withProps(({ filter }) => {
+    withProps(({ filter, plugins }) => {
         if (!icons) {
-            icons = getPlugins("cms-icons").reduce((icons: Array<Object>, pl: Object) => {
+            icons = plugins.reduce((icons: Array<Object>, pl: Object) => {
                 return icons.concat(pl.getIcons());
             }, []);
         }

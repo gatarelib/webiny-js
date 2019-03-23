@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { css } from "emotion";
-import { renderPlugins } from "webiny-app/plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 import { type WithPageDetailsProps } from "webiny-app-cms/admin/components";
 import { Typography } from "webiny-ui/Typography";
 import { Grid, Cell } from "webiny-ui/Grid";
@@ -42,8 +42,8 @@ const PageActions = ({ pageDetails, pageDetails: { page } }: Props) => {
                     <Typography use="headline5">{page.title}</Typography>
                 </Cell>
                 <Cell span={4} className={headerActions}>
-                    {renderPlugins("cms-page-details-header-left", { pageDetails })}
-                    {renderPlugins("cms-page-details-header-right", { pageDetails })}
+                    <Plugins type={"cms-page-details-header-left"} params={{ pageDetails }}/>
+                    <Plugins type={"cms-page-details-header-right"} params={{ pageDetails }}/>
                 </Cell>
             </Grid>
         </React.Fragment>

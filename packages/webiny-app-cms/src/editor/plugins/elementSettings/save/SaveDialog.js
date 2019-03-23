@@ -2,7 +2,7 @@
 import React from "react";
 import { compose, shouldUpdate } from "recompose";
 import { css } from "emotion";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import ElementPreview from "./SaveDialog/ElementPreview";
 
 import {
@@ -47,18 +47,12 @@ type Props = {
     onClose: Function,
     onSubmit: Function,
     element: Object,
-    type: string
+    type: string,
+    blockCategories: Array<Object>
 };
 
 const SaveDialog = (props: Props) => {
-    const { element, open, onClose, onSubmit, type } = props;
-
-    const blockCategoriesOptions = getPlugins("cms-block-category").map((item: Object) => {
-        return {
-            value: item.name,
-            label: item.title
-        };
-    });
+    const { element, open, onClose, onSubmit, type, blockCategories } = props;
 
     return (
         <Dialog open={open} onClose={onClose} className={narrowDialog}>
@@ -95,7 +89,7 @@ const SaveDialog = (props: Props) => {
                                                 <Select
                                                     label="Category"
                                                     description="Select a block category"
-                                                    options={blockCategoriesOptions}
+                                                    options={blockCategories}
                                                 />
                                             </Bind>
                                         </Cell>
@@ -136,5 +130,15 @@ const SaveDialog = (props: Props) => {
 export default compose(
     shouldUpdate((props, nextProps) => {
         return props.open !== nextProps.open;
+    }),
+    withPlugins({
+        type: "cms-block-category",
+        prop: "blockCategories",
+        format: plugins => {
+            return plugins.map((item: Object) => ({
+                value: item.name,
+                label: item.title
+            }));
+        }
     })
 )(SaveDialog);

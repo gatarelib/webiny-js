@@ -1,10 +1,7 @@
 // @flowIgnore
 import * as React from "react";
-import { library } from "@fortawesome/fontawesome-svg-core";
 import type { PluginType } from "webiny-plugins/types";
-import { fab } from "@fortawesome/free-brands-svg-icons";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-import { far } from "@fortawesome/free-regular-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core";
 
 const createSvg = (icon: Object) => {
     return (
@@ -19,7 +16,13 @@ const icons = [];
 export default ({
     name: "cms-icons-fontawesome",
     type: "cms-icons",
-    init() {
+    async factory() {
+        const [ fab, fas, far ] = await Promise.all([
+            import("@fortawesome/free-brands-svg-icons").then(m => m.fab),
+            import("@fortawesome/free-solid-svg-icons").then(m => m.fas),
+            import("@fortawesome/free-regular-svg-icons").then(m => m.far),
+        ]);
+
         library.add(fab, fas, far);
 
         Object.keys(library.definitions).forEach(pack => {

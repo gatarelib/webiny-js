@@ -3,10 +3,11 @@ import * as React from "react";
 import { compose, withState } from "recompose";
 import { Mutation } from "react-apollo";
 import { connect } from "webiny-app-cms/editor/redux";
+import { withPlugins } from "webiny-app/components";
 import { deactivatePlugin, updateElement } from "webiny-app-cms/editor/actions";
 import { getContent } from "webiny-app-cms/editor/selectors";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
-import { getPlugins, unregisterPlugin } from "webiny-plugins";
+import { unregisterPlugin } from "webiny-plugins";
 import { createElement } from "webiny-app-cms/editor/utils";
 import { OverlayLayout } from "webiny-admin/components/OverlayLayout";
 import { ReactComponent as SearchIcon } from "webiny-app-cms/editor/assets/icons/search.svg";
@@ -36,7 +37,8 @@ type SearchBarProps = {
     updateElement: Function,
     content: Object,
     active: string,
-    setActive: Function
+    setActive: Function,
+    plugins: Object
 } & WithSnackbarProps;
 
 type SearchBarState = {
@@ -220,13 +222,18 @@ class SearchBar extends React.Component<SearchBarProps, SearchBarState> {
     };
 
     render() {
-        const { active, setActive } = this.props;
+        const {
+            active,
+            setActive,
+            plugins: { blockCategories, blocks },
+            deactivatePlugin
+        } = this.props;
         const plugins: Object = {
             categories: {
-                list: [allBlockCategory, ...getPlugins("cms-block-category")],
+                list: [allBlockCategory, ...blockCategories],
                 active: null
             },
-            blocks: getPlugins("cms-block")
+            blocks
         };
 
         plugins.categories.active = plugins.categories.list.find(({ name }) => name === active);
@@ -235,7 +242,7 @@ class SearchBar extends React.Component<SearchBarProps, SearchBarState> {
         return (
             <OverlayLayout
                 barMiddle={this.renderSearchInput()}
-                onExited={() => this.props.deactivatePlugin({ name: "cms-search-blocks-bar" })}
+                onExited={() => deactivatePlugin({ name: "cms-search-blocks-bar" })}
             >
                 <SplitView>
                     <LeftPanel span={3}>
@@ -300,5 +307,6 @@ export default compose(
     ),
     withKeyHandler(),
     withSnackbar(),
-    withState("active", "setActive", "cms-block-category-all")
+    withState("active", "setActive", "cms-block-category-all"),
+    withPlugins({ type: { blocks: "cms-block", blockCategories: "cms-block-category" } })
 )(SearchBar);

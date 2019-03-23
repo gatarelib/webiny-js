@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import styled from "react-emotion";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 
 const PluginViewsContainer = styled("div")({
     position: "absolute",
@@ -10,13 +10,11 @@ const PluginViewsContainer = styled("div")({
     zIndex: 3
 });
 
-const PluginViews = () => {
-    const actions = getPlugins("cms-toolbar");
-
+const PluginViews = ({ plugins }) => {
     return (
         <PluginViewsContainer data-type={"plugin-views-top"}>
             <div style={{ position: "relative" }}>
-                {actions.map(plugin =>
+                {plugins.map(plugin =>
                     React.cloneElement(plugin.renderView(), { key: plugin.name })
                 )}
             </div>
@@ -24,4 +22,4 @@ const PluginViews = () => {
     );
 };
 
-export default PluginViews;
+export default withPlugins({ type: "cms-toolbar" })(PluginViews);

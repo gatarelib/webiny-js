@@ -2,7 +2,8 @@
 import React from "react";
 import { compose, lifecycle } from "recompose";
 import { Transition } from "react-transition-group";
-import { getPlugins, getPlugin } from "webiny-plugins";
+import { Plugins } from "webiny-app/components/Plugins";
+import { getPluginSync } from "webiny-plugins";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
 import { css } from "emotion";
 import { Elevation } from "webiny-ui/Elevation";
@@ -124,7 +125,7 @@ class Menu extends React.Component<*, *> {
 
     renderActivePlugin = () => {
         const { plugin, value } = this.state.activePlugin || {};
-        const menuPlugin = getPlugin(plugin);
+        const menuPlugin = getPluginSync(plugin);
 
         if (!menuPlugin) {
             return null;
@@ -158,22 +159,32 @@ class Menu extends React.Component<*, *> {
 
     renderPlugins = (type: string) => {
         const { value, onChange, editor, exclude } = this.props;
-        return getPlugins(type)
-            .filter(pl => !exclude.includes(pl.name))
-            .map(plugin => {
-                return React.cloneElement(
-                    plugin.render({
-                        MenuButton,
-                        value,
-                        onChange,
-                        editor: editor.current,
-                        activatePlugin: this.activatePlugin
-                    }),
-                    {
-                        key: plugin.name
-                    }
-                );
-            });
+        return (
+            <Plugins type={type}>
+                {({ plugins }) =>
+                    !plugins ? null : (
+                        <>
+                            {plugins
+                                .filter(pl => !exclude.includes(pl.name))
+                                .map(plugin => {
+                                    return React.cloneElement(
+                                        plugin.render({
+                                            MenuButton,
+                                            value,
+                                            onChange,
+                                            editor: editor.current,
+                                            activatePlugin: this.activatePlugin
+                                        }),
+                                        {
+                                            key: plugin.name
+                                        }
+                                    );
+                                })}
+                        </>
+                    )
+                }
+            </Plugins>
+        );
     };
 
     render() {

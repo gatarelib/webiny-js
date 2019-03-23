@@ -1,11 +1,14 @@
+// TODO: TU SAM STAO! Tu ce mozda trebati napraviti <Plugins> da supporta `names` objekt, da mozes loadati random pluginove!!!!!
+
 // @flow
 import React from "react";
+import { Plugin } from "webiny-app/components/Plugins";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, lifecycle, pure } from "recompose";
 import { TopAppBarSecondary, TopAppBarSection } from "webiny-ui/TopAppBar";
 import { ButtonDefault, ButtonIcon } from "webiny-ui/Button";
 import { deactivateElement } from "webiny-app-cms/editor/actions";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import { getActiveElement } from "webiny-app-cms/editor/selectors";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
 import Menu from "./components/Menu";
@@ -20,11 +23,11 @@ const getElementActions = (plugin: Object) => {
 
     const actions = plugin.settings.map(pl => {
         if (typeof pl === "string") {
-            return { plugin: getPlugin(pl || divider), options: {} };
+            return { plugin: getPluginSync(pl || divider), options: {} };
         }
 
         if (Array.isArray(pl)) {
-            return { plugin: getPlugin(pl[0] || divider), options: pl[1] };
+            return { plugin: getPluginSync(pl[0] || divider), options: pl[1] };
         }
 
         return null;
@@ -32,8 +35,8 @@ const getElementActions = (plugin: Object) => {
 
     return [
         ...actions,
-        { plugin: getPlugin("cms-element-settings-advanced") },
-        { plugin: getPlugin("cms-element-settings-save") }
+        { plugin: getPluginSync("cms-element-settings-advanced") },
+        { plugin: getPluginSync("cms-element-settings-save") }
     ].filter(pl => pl);
 };
 
@@ -42,40 +45,45 @@ const ElementSettingsBar = pure(({ elementType, deactivateElement }) => {
         return null;
     }
 
-    const plugin = getPlugin(elementType);
-    if (!plugin) {
-        return null;
-    }
-
-    const actions = getElementActions(plugin);
-
     return (
-        <React.Fragment>
-            <TopAppBarSecondary fixed>
-                <TopAppBarSection alignStart>
-                    <ButtonDefault onClick={deactivateElement}>
-                        <ButtonIcon icon={<NavigateBeforeIcon />} /> Back
-                    </ButtonDefault>
-                </TopAppBarSection>
-                <TopAppBarSection>
-                    {/*
-                    Render an action button for each relevant action.
-                    Each `element` can have different `element-settings` plugins.
-                    If no `settings` array is defined in an `element` plugin, all settings are shown.
-                    */}
-                    {actions.map(({ plugin, options }, index) => {
-                        return (
-                            <div key={plugin.name + "-" + index} style={{ position: "relative" }}>
-                                {plugin.renderAction({ options })}
-                                {typeof plugin.renderMenu === "function" && (
-                                    <Menu plugin={plugin} options={options} />
-                                )}
-                            </div>
-                        );
-                    })}
-                </TopAppBarSection>
-            </TopAppBarSecondary>
-        </React.Fragment>
+        <Plugin name={elementType}>
+            {({ plugin }) => {
+                if (!plugin) {
+                    return null;
+                }
+
+                const actions = getElementActions(plugin);
+
+                return (
+                    <React.Fragment>
+                        <TopAppBarSecondary fixed>
+                            <TopAppBarSection alignStart>
+                                <ButtonDefault onClick={deactivateElement}>
+                                    <ButtonIcon icon={<NavigateBeforeIcon />} /> Back
+                                </ButtonDefault>
+                            </TopAppBarSection>
+                            <TopAppBarSection>
+                                {/*
+                                    Render an action button for each relevant action.
+                                    Each `element` can have different `element-settings` plugins.
+                                    If no `settings` array is defined in an `element` plugin, all settings are shown.
+                                */}
+                                {actions.map(({ plugin, options }, index) => {
+                                    return (
+                                        <div key={plugin.name + "-" + index} style={{ position: "relative" }}>
+                                            {plugin.renderAction({ options })}
+                                            {typeof plugin.renderMenu === "function" && (
+                                                <Menu plugin={plugin} options={options} />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </TopAppBarSection>
+                        </TopAppBarSecondary>
+                    </React.Fragment>
+                );
+            }}
+        </Plugin>
     );
 });
 

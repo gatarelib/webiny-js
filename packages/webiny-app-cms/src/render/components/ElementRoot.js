@@ -2,11 +2,7 @@
 import React from "react";
 import { get } from "dot-prop-immutable";
 import { isEqual } from "lodash";
-import { getPlugins } from "webiny-plugins";
-import type {
-    CmsRenderElementStylePluginType,
-    CmsRenderElementAttributesPluginType
-} from "webiny-app-cms/types";
+import { withPlugins } from "webiny-app/components";
 
 const Node = "div";
 
@@ -14,32 +10,24 @@ const combineClassNames = (...styles) => {
     return styles.filter(s => s !== "" && s !== "css-0").join(" ");
 };
 
-class ElementRoot extends React.Component<*> {
-    stylePlugins: Array<CmsRenderElementStylePluginType>;
-    attributePlugins: Array<CmsRenderElementAttributesPluginType>;
-    constructor() {
-        super();
-        this.stylePlugins = getPlugins("cms-render-element-style");
-        this.attributePlugins = getPlugins("cms-render-element-attributes");
-    }
-
+class ElementRootBase extends React.Component<*> {
     shouldComponentUpdate(props: Object) {
         return !isEqual(props.element.data, this.props.element.data);
     }
 
     render() {
-        const { element, style = {}, children, className = null } = this.props;
+        const { plugins, element, style = {}, children, className = null } = this.props;
 
         const shallowElement = { id: element.id, type: element.type, data: element.data };
 
-        const finalStyle = this.stylePlugins.reduce((style, pl) => {
+        const finalStyle = plugins.styles.reduce((style, pl) => {
             return pl.renderStyle({ element: shallowElement, style });
         }, style);
 
-        const attributes = this.attributePlugins.reduce((attributes, pl) => {
+        const attributes = plugins.attributes.reduce((attributes, pl) => {
             return pl.renderAttributes({ element: shallowElement, attributes });
         }, {});
-        
+
         const classNames = get(element, "data.settings.className", "");
 
         const getAllClasses = (...extraClasses) => {
@@ -66,4 +54,6 @@ class ElementRoot extends React.Component<*> {
     }
 }
 
-export { ElementRoot };
+export const ElementRoot = withPlugins({
+    type: { styles: "cms-render-element-style", attributes: "cms-render-element-attributes" }
+})(ElementRootBase);

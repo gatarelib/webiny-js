@@ -1,10 +1,10 @@
 //@flow
 import * as React from "react";
-import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers } from "recompose";
+import { connect } from "webiny-app-cms/editor/redux";
 import Draggable from "webiny-app-cms/editor/components/Draggable";
 import { dragStart, dragEnd, deactivatePlugin, dropElement } from "webiny-app-cms/editor/actions";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { getActivePluginParams } from "webiny-app-cms/editor/selectors";
 import { withCms } from "webiny-app-cms/context";
 import * as Styled from "./StyledComponents";
@@ -48,7 +48,11 @@ type Props = {
     params: Object | null,
     cms: CmsProviderPropsType,
     enableDragOverlay: Function,
-    disableDragOverlay: Function
+    disableDragOverlay: Function,
+    plugins: {
+        elements: Array<ElementPluginType>,
+        groups: Array<ElementGroupPluginType>
+    }
 };
 
 type State = {
@@ -56,20 +60,20 @@ type State = {
 };
 
 class AddElement extends React.Component<Props, State> {
-    state = {
-        group: this.getGroups()[0].name
-    };
+    constructor(props) {
+        super(props);
 
-    getGroups(): Array<ElementGroupPluginType> {
-        return getPlugins("cms-element-group");
+        this.state = {
+            group: props.plugins.groups[0].name
+        }
     }
 
     getGroupElements(group: string) {
-        return getPlugins("cms-element").filter(
+        return this.props.plugins.elements.filter(
             (el: ElementPluginType) => el.toolbar && el.toolbar.group === group
         );
     }
-
+    
     renderDraggable = (element, plugin) => {
         const { name } = plugin;
         const { dragStart, deactivatePlugin, dragEnd } = this.props;
@@ -148,13 +152,14 @@ class AddElement extends React.Component<Props, State> {
     render() {
         const {
             params,
-            cms: { theme }
+            cms: { theme },
+            plugins
         } = this.props;
 
         return (
             <Styled.Flex>
                 <List className={categoriesList}>
-                    {this.getGroups().map(plugin => (
+                    {plugins.groups.map(plugin => (
                         <ListItem
                             onClick={() => this.setState({ group: plugin.name })}
                             key={plugin.name}
@@ -200,6 +205,7 @@ class AddElement extends React.Component<Props, State> {
 }
 
 export default compose(
+    withPlugins({ type: { elements: "cms-element", groups: "cms-element-group" } }),
     connect(
         state => {
             const getParams = getActivePluginParams("cms-toolbar-add-element");

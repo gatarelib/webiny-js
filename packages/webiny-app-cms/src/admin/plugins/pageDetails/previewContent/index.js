@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { renderPlugins } from "webiny-app/plugins";
+import { Plugins } from "webiny-app/components/Plugins";
 import type { CmsPageDetailsPluginType, WithPageDetailsProps } from "webiny-app-cms/types";
 import { Tab } from "webiny-ui/Tabs";
 import styled from "react-emotion";
@@ -28,9 +28,10 @@ export default ([
                         <Elevation z={2}>
                             <div style={{ position: "relative" }}>
                                 {loading && <CircularProgress />}
-                                {renderPlugins("cms-page-details-revision-content-preview", {
-                                    pageDetails
-                                })}
+                                <Plugins
+                                    type={"cms-page-details-revision-content-preview"}
+                                    params={{ pageDetails }}
+                                />
                             </div>
                         </Elevation>
                     </RenderBlock>

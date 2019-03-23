@@ -1,11 +1,13 @@
 // @flow
 import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { ReactComponent as IconSvg } from "./round-star_border-24px.svg";
 import IconSettings from "./IconSettings";
 import styled from "react-emotion";
 import Icon from "./Icon";
-import { getSvg } from "./utils";
 import Action from "./../../elementSettings/components/Action";
+// $FlowFixMe
+import { faStar } from "@fortawesome/free-regular-svg-icons/faStar";
 
 export default () => {
     const PreviewBox = styled("div")({
@@ -49,13 +51,18 @@ export default () => {
             ],
             target: ["cms-element-column", "cms-element-row"],
             create(options: Object) {
+                // TODO: FIX ICON SVG!!!!
                 return {
                     type: "cms-element-icon",
                     elements: [],
                     data: {
                         icon: {
                             id: ["far", "star"],
-                            svg: getSvg(["far", "star"]),
+                            svg: renderToStaticMarkup(
+                                <svg width={50} viewBox={`0 0 ${faStar.icon[0]} ${faStar.icon[1]}`}>
+                                    <path d={faStar.icon[4]} fill="currentColor" />
+                                </svg>
+                            ),
                             width: 50
                         },
                         settings: {

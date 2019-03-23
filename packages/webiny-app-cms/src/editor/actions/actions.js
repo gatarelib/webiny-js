@@ -9,7 +9,7 @@ import {
     addReducer,
     addHigherOrderReducer
 } from "webiny-app-cms/editor/redux";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import {
     getPage,
     getElementWithChildren,
@@ -97,7 +97,7 @@ export const togglePlugin = createAction(TOGGLE_PLUGIN);
 addReducer([TOGGLE_PLUGIN], "ui.plugins", (state, action) => {
     const { name, params, closeOtherInGroup = false } = action.payload;
 
-    const plugin = getPlugin(name);
+    const plugin = getPluginSync(name);
 
     if (!plugin) {
         return state;
@@ -126,7 +126,7 @@ addReducer([TOGGLE_PLUGIN], "ui.plugins", (state, action) => {
 export const deactivatePlugin = createAction(DEACTIVATE_PLUGIN);
 addReducer([DEACTIVATE_PLUGIN], "ui.plugins", (state, action) => {
     const { name } = action.payload;
-    const plugin = getPlugin(name);
+    const plugin = getPluginSync(name);
     if (!plugin) {
         return state;
     }
@@ -213,7 +213,7 @@ addMiddleware([DELETE_ELEMENT], ({ store, next, action }) => {
     store.dispatch(updateElement({ element: parent }));
 
     // Execute `onChildDeleted` if defined
-    const plugin = getPlugin(parent.type);
+    const plugin = getPluginSync(parent.type);
     if (!plugin) {
         return;
     }
@@ -229,7 +229,7 @@ addMiddleware([ELEMENT_DROPPED], ({ store, next, action }) => {
 
     const state = store.getState();
     const target = getElementWithChildren(state, action.payload.target.id);
-    const plugin = getPlugin(target.type);
+    const plugin = getPluginSync(target.type);
 
     if (!plugin) {
         return;
@@ -245,7 +245,7 @@ addMiddleware([ELEMENT_DROPPED], ({ store, next, action }) => {
         source = getElementWithChildren(state, source.id);
     }
 
-    const targetPlugin = getPlugin(target.type);
+    const targetPlugin = getPluginSync(target.type);
     if (!targetPlugin) {
         return;
     }

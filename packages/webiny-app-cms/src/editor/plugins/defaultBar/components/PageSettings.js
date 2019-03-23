@@ -3,7 +3,7 @@ import React from "react";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, lifecycle, withHandlers, withState } from "recompose";
 import { omit } from "lodash";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { deactivatePlugin, updateRevision } from "webiny-app-cms/editor/actions";
 import { getPage } from "webiny-app-cms/editor/selectors";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
@@ -29,11 +29,11 @@ type Props = {
     page: Object,
     savePage: Function,
     active: string,
-    setActive: Function
+    setActive: Function,
+    plugins: Array<CmsPageSettingsPluginType>
 };
 
-const PageSettings = ({ deactivatePlugin, page, savePage, active, setActive }: Props) => {
-    const plugins = getPlugins("cms-editor-page-settings");
+const PageSettings = ({ deactivatePlugin, page, savePage, active, setActive, plugins }: Props) => {
     const activePlugin: ?CmsPageSettingsPluginType = plugins.find(pl => pl.name === active);
 
     if (!activePlugin) {
@@ -113,5 +113,6 @@ export default compose(
         componentWillUnmount() {
             this.props.removeKeyHandler("escape");
         }
-    })
+    }),
+    withPlugins({ type: "cms-editor-page-settings" })
 )(PageSettings);

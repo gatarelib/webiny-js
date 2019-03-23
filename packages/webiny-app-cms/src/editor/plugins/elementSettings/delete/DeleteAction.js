@@ -2,23 +2,24 @@
 import * as React from "react";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers } from "recompose";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 import { deleteElement } from "webiny-app-cms/editor/actions";
 import { getActiveElement } from "webiny-app-cms/editor/selectors";
 
 const DeleteAction = ({ element, children, deleteElement }: Object) => {
-    const plugin = getPlugin(element.type);
-    if (!plugin) {
-        return null;
-    }
+    return (
+        <Plugin name={element.type}>
+            {({ plugin }) => {
+                if (typeof plugin.canDelete === "function") {
+                    if (!plugin.canDelete({ element })) {
+                        return null;
+                    }
+                }
 
-    if (typeof plugin.canDelete === "function") {
-        if (!plugin.canDelete({ element })) {
-            return null;
-        }
-    }
-
-    return React.cloneElement(children, { onClick: deleteElement });
+                return React.cloneElement(children, { onClick: deleteElement });
+            }}
+        </Plugin>
+    );
 };
 
 export default compose(

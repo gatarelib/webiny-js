@@ -1,6 +1,6 @@
 // @flow
 import gql from "graphql-tag";
-import { getPlugins } from "webiny-plugins";
+import { getPluginsSync } from "webiny-plugins";
 import type { CmsPageSettingsPluginType } from "webiny-app-cms/types";
 
 const error = `
@@ -70,7 +70,7 @@ export const getPage = () => gql`
                     content
                     settings {
                         _empty
-                        ${getPlugins("cms-editor-page-settings")
+                        ${getPluginsSync("cms-editor-page-settings")
                             .map((pl: CmsPageSettingsPluginType) => pl.fields)
                             .join("\n")}
                     }

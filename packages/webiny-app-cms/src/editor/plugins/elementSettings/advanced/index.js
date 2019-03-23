@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { getPlugin } from "webiny-plugins";
+import { getPluginSync } from "webiny-plugins";
 import { addMiddleware } from "webiny-app-cms/editor/redux";
 import { ELEMENT_CREATED, activateElement, togglePlugin } from "webiny-app-cms/editor/actions";
 import { ReactComponent as SettingsIcon } from "webiny-app-cms/editor/assets/icons/settings.svg";
@@ -19,14 +19,14 @@ export default [
                 next(action);
 
                 // Check the source of the element (could be `saved` element which behaves differently from other elements)
-                const sourcePlugin = getPlugin(source.type);
+                const sourcePlugin = getPluginSync(source.type);
                 if (!sourcePlugin) {
                     return;
                 }
                 const { onCreate } = sourcePlugin;
                 if (!onCreate || onCreate !== "skip") {
                     // If source element does not define a specific `onCreate` behavior - continue with the actual element plugin
-                    const plugin = getPlugin(element.type);
+                    const plugin = getPluginSync(element.type);
                     if (!plugin) {
                         return;
                     }

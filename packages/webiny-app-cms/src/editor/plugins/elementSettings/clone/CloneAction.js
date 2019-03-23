@@ -2,7 +2,7 @@
 import * as React from "react";
 import { connect } from "webiny-app-cms/editor/redux";
 import { compose, withHandlers } from "recompose";
-import { getPlugin } from "webiny-plugins";
+import { Plugin } from "webiny-app/components/Plugins";
 import { set } from "dot-prop-immutable";
 import { redux } from "webiny-app-cms/editor/redux";
 import { updateElement } from "webiny-app-cms/editor/actions";
@@ -14,12 +14,13 @@ import {
 } from "webiny-app-cms/editor/selectors";
 
 const CloneAction = ({ element, children, duplicate }: Object) => {
-    const plugin = getPlugin(element.type);
-    if (!plugin) {
-        return null;
-    }
-
-    return React.cloneElement(children, { onClick: duplicate });
+    return (
+        <Plugin name={element.type}>
+            {({ plugin }) =>
+                !plugin ? null : React.cloneElement(children, { onClick: duplicate })
+            }
+        </Plugin>
+    );
 };
 
 export default compose(

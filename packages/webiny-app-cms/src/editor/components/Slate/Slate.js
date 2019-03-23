@@ -6,7 +6,7 @@ import { compose, pure } from "recompose";
 import { get } from "lodash";
 import { Editor } from "slate-react";
 import { Value } from "slate";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import { focusSlateEditor, blurSlateEditor } from "webiny-app-cms/editor/actions";
 import { withCms } from "webiny-app-cms/context";
 import { createValue } from "./index";
@@ -34,7 +34,7 @@ class SlateEditor extends React.Component<*, *> {
             activePlugin: null
         };
 
-        this.plugins = getPlugins("cms-slate-editor")
+        this.plugins = props.slatePlugins
             .filter(pl => !props.exclude.includes(pl.name))
             .map(pl => pl.slate);
     }
@@ -166,6 +166,7 @@ export default pure(
             null,
             { focusSlateEditor, blurSlateEditor }
         ),
-        withCms()
+        withCms(),
+        withPlugins({ type: "cms-slate-editor", prop: "slatePlugins" })
     )(SlateEditor)
 );

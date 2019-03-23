@@ -2,7 +2,7 @@
 import React from "react";
 import { compose, shouldUpdate } from "recompose";
 import { css } from "emotion";
-import { getPlugins } from "webiny-plugins";
+import { withPlugins } from "webiny-app/components";
 import {
     Dialog,
     DialogHeader,
@@ -43,13 +43,14 @@ type Props = {
     open: boolean,
     plugin: ?Object,
     onClose: Function,
-    onSubmit: Function
+    onSubmit: Function,
+    plugins: Array<{}>
 };
 
 const EditBlockDialog = (props: Props) => {
-    const { open, onClose, onSubmit, plugin } = props;
+    const { open, onClose, onSubmit, plugin, plugins } = props;
 
-    const blockCategoriesOptions = getPlugins("cms-block-category").map((item: Object) => ({
+    const blockCategoriesOptions = plugins.map((item: Object) => ({
         value: item.name,
         label: item.title
     }));
@@ -107,5 +108,6 @@ const EditBlockDialog = (props: Props) => {
 export default compose(
     shouldUpdate((props, nextProps) => {
         return props.open !== nextProps.open;
-    })
+    }),
+    withPlugins({ type: "cms-block-category" })
 )(EditBlockDialog);
