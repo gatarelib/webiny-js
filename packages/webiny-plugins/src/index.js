@@ -2,7 +2,8 @@
 import type { PluginType } from "webiny-plugins/types";
 
 const __plugins = {};
-const __loaded = {};
+
+const __callbacks = { onRegister: [], onUnregister: [] };
 
 const _register = plugins => {
     for (let i = 0; i < plugins.length; i++) {
@@ -18,55 +19,31 @@ const _register = plugins => {
         }
 
         __plugins[name] = plugin;
-        __loaded[name] = !plugin.factory;
+
+        __callbacks.onRegister.map(cb => cb(plugin));
     }
+};
+
+export const onRegister = (callback: Function) => {
+    __callbacks.onRegister.push(callback);
+};
+
+export const onUnregister = (callback: Function) => {
+    __callbacks.onUnregister.push(callback);
 };
 
 export const registerPlugins = (...args: any): void => _register(args);
 
-export const getPlugins = async (type: string | Object): Promise<Array<PluginType>> => {
-    const values: Array<PluginType> = (Object.values(__plugins): any);
-
-    if (typeof type === "string") {
-        const plugins = values.filter((plugin: PluginType) => (type ? plugin.type === type : true));
-        const loaded = await Promise.all(plugins.map(pl => getPlugin(pl.name)));
-
-        return [...loaded.filter(Boolean)];
-    }
-
-    const loaded: Object = {};
-    await Promise.all(
-        Object.keys(type).map(async name => {
-            // $FlowFixMe
-            loaded[name] = await getPlugins(type[name]);
-        })
-    );
-
-    return loaded;
-};
-
-export const getPluginsSync = (type: string): Array<PluginType> => {
+export const getPlugins = (type: string): Array<PluginType> => {
     const values: Array<PluginType> = (Object.values(__plugins): any);
     return values.filter((plugin: PluginType) => (type ? plugin.type === type : true));
 };
 
-export const getPluginSync = (name: string): PluginType => {
-    return __plugins[name];
-};
-
-export const getPlugin = async (name: string): Promise<PluginType | null> => {
-    if (!__plugins[name]) {
-        return null;
-    }
-
-    if (!__loaded[name]) {
-        const loaded = await __plugins[name].factory();
-        __plugins[name] = { ...__plugins[name], ...(loaded || {}) };
-        __loaded[name] = true;
-    }
+export const getPlugin = (name: string): ?PluginType => {
     return __plugins[name];
 };
 
 export const unregisterPlugin = (name: string): void => {
     delete __plugins[name];
+    __callbacks.onUnregister.map(cb => cb(name));
 };

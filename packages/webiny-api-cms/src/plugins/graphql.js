@@ -1,5 +1,5 @@
 // @flow
-import { getPluginsSync } from "webiny-plugins";
+import { getPlugins } from "webiny-plugins";
 import { dummyResolver } from "webiny-api/graphql";
 import { hasScope } from "webiny-api-security";
 
@@ -32,7 +32,7 @@ export default {
         page.typeDefs,
         category.typeDefs,
         menu.typeDefs,
-        ...getPluginsSync("cms-schema").map(pl => pl.typeDefs)
+        ...getPlugins("cms-schema").map(pl => pl.typeDefs)
     ],
     resolvers: () => [
         {
@@ -46,7 +46,7 @@ export default {
         page.resolvers,
         category.resolvers,
         menu.resolvers,
-        ...getPluginsSync("cms-schema").map(pl => pl.resolvers)
+        ...getPlugins("cms-schema").map(pl => pl.resolvers)
     ],
     security: {
         shield: {

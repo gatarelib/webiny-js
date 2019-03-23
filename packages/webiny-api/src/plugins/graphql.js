@@ -1,6 +1,6 @@
 // @flow
 import { dummyResolver } from "../graphql";
-import { getPluginsSync } from "webiny-plugins";
+import { getPlugins } from "webiny-plugins";
 import { type GraphQLSchemaPluginType } from "webiny-api/types";
 import { resolveCreate } from "webiny-api/graphql";
 const fileFetcher = ctx => ctx.api.entities.File;
@@ -38,7 +38,7 @@ export default ({
                     files: FilesMutation
                 }
             `,
-            ...getPluginsSync("schema-settings").map(pl => pl.typeDefs)
+            ...getPlugins("schema-settings").map(pl => pl.typeDefs)
         ];
     },
     resolvers: () => [
@@ -55,7 +55,7 @@ export default ({
 
             }
         },
-        ...getPluginsSync("schema-settings").map(plugin => {
+        ...getPlugins("schema-settings").map(plugin => {
             return {
                 SettingsQuery: {
                     [plugin.namespace]: async (_: any, args: Object, ctx: Object) => {

@@ -1,7 +1,7 @@
 // @flow
 import type { PluginType } from "webiny-plugins/types";
 import authenticate from "./authentication/authenticate";
-import { getPluginsSync } from "webiny-plugins";
+import { getPlugins } from "webiny-plugins";
 import { shield } from "graphql-shield";
 import get from "lodash/get";
 
@@ -16,7 +16,7 @@ export default ([
             }
 
             const middleware = [];
-            getPluginsSync("graphql").forEach(plugin => {
+            getPlugins("graphql").forEach(plugin => {
                 const { security } = plugin;
                 if (!security) {
                     return true;
@@ -37,7 +37,7 @@ export default ([
         type: "graphql-context",
         name: "graphql-context-security",
         apply: async (...args) => {
-            const securityPlugins: Array<PluginType> = getPluginsSync("graphql-security");
+            const securityPlugins: Array<PluginType> = getPlugins("graphql-security");
             for (let i = 0; i < securityPlugins.length; i++) {
                 await securityPlugins[i].authenticate(...args);
             }

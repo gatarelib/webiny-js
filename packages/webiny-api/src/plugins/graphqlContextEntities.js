@@ -5,9 +5,8 @@ import { getPlugins } from "webiny-plugins";
 const graphqlContextEntities: GraphQLContextPluginType = {
     name: "graphql-context-entities",
     type: "graphql-context",
-    async apply(context) {
-        const entityPlugins = await getPlugins("entity");
-        entityPlugins.forEach((plugin: EntityPluginType) => {
+    apply(context) {
+        getPlugins("entity").forEach((plugin: EntityPluginType) => {
             if (!context[plugin.namespace]) {
                 context[plugin.namespace] = {
                     entities: {}
