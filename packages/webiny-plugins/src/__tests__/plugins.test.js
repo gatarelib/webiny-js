@@ -1,6 +1,6 @@
-import { registerPlugins, unregisterPlugin, getPlugin, getPlugins } from "webiny-plugins";
+import { registerPlugins, unregisterPlugin, getPluginSync, getPluginsSync } from "webiny-plugins";
 
-test("plugins - registerPlugins, unregisterPlugin, getPlugin, getPlugins", async () => {
+test("plugins - registerPlugins, unregisterPlugin, getPluginSync, getPluginsSync", async () => {
     registerPlugins(
         {
             type: "test",
@@ -39,52 +39,52 @@ test("plugins - registerPlugins, unregisterPlugin, getPlugin, getPlugins", async
         }
     );
 
-    expect(getPlugins().length).toBe(7);
+    expect(getPluginsSync().length).toBe(7);
 
-    expect(getPlugins("test").length).toBe(7);
-    expect(getPlugins("testXYZ").length).toBe(0);
+    expect(getPluginsSync("test").length).toBe(7);
+    expect(getPluginsSync("testXYZ").length).toBe(0);
 
-    expect(getPlugin("test-1")).toEqual({
+    expect(getPluginSync("test-1")).toEqual({
         type: "test",
         name: "test-1"
     });
 
-    expect(getPlugin("test-2")).toEqual({
+    expect(getPluginSync("test-2")).toEqual({
         type: "test",
         name: "test-2"
     });
 
-    expect(getPlugin("test-3")).toEqual({
+    expect(getPluginSync("test-3")).toEqual({
         type: "test",
         name: "test-3"
     });
 
     unregisterPlugin("test-3");
 
-    expect(getPlugins().length).toBe(6);
-    expect(getPlugins("test").length).toBe(6);
-    expect(getPlugins("testXYZ").length).toBe(0);
+    expect(getPluginsSync().length).toBe(6);
+    expect(getPluginsSync("test").length).toBe(6);
+    expect(getPluginsSync("testXYZ").length).toBe(0);
 
-    expect(getPlugin("test-1")).toEqual({
+    expect(getPluginSync("test-1")).toEqual({
         type: "test",
         name: "test-1"
     });
 
-    expect(getPlugin("test-2")).toEqual({
+    expect(getPluginSync("test-2")).toEqual({
         type: "test",
         name: "test-2"
     });
 
-    expect(getPlugin("test-4")).toEqual({
+    expect(getPluginSync("test-4")).toEqual({
         type: "test",
         name: "Something...",
         _name: "test-4"
     });
 
-    expect(getPlugin("test-3")).toEqual(undefined);
+    expect(getPluginSync("test-3")).toEqual(null);
 });
 
-test("plugins - registerPlugins, unregisterPlugin, getPlugin, getPlugins", async () => {
+test("plugins - registerPlugins, unregisterPlugin, getPluginSync, getPluginsSync", async () => {
     try {
         registerPlugins({
             type: "test",
@@ -98,6 +98,7 @@ test("plugins - registerPlugins, unregisterPlugin, getPlugin, getPlugins", async
     throw Error(`Error should've been thrown.`);
 });
 
+/*
 test(`plugins - if present, "init" method must be executed upon adding`, async () => {
     let initialized = false;
     registerPlugins({
@@ -108,3 +109,4 @@ test(`plugins - if present, "init" method must be executed upon adding`, async (
 
     expect(initialized).toBe(true);
 });
+*/
