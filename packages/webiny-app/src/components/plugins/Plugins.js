@@ -1,8 +1,10 @@
 import * as React from "react";
 import md5 from "md5";
 import invariant from "invariant";
-import { getPlugin, getPlugins } from "webiny-plugins";
-import { PluginsContext } from "webiny-app/components/context/plugins";
+import { get, set } from "lodash";
+import { isEqual } from "lodash";
+import { getPlugin, getPlugins, getPluginsSync } from "webiny-plugins";
+import { PluginsConsumer } from "webiny-app/components/context/plugins";
 import { CircularProgress } from "webiny-ui/Progress";
 
 class LazyPlugin extends React.Component {
@@ -41,12 +43,12 @@ export const Plugin = ({ name, children, loading, params }) => {
 };
 
 export class Plugins extends React.Component {
-    static contextType = PluginsContext;
+    static cache = {};
 
     state = {
-        plugins: null
+        checksum: null
     };
-
+    
     renderPlugins(plugins) {
         const { children, params } = this.props;
 
@@ -64,17 +66,18 @@ export class Plugins extends React.Component {
         );
     }
 
-    generateContextChecksum() {
-        const { type } = this.props;
-        const ctxPlugins = this.context;
+    generateContextChecksum(ctxPlugins) {
         if (!ctxPlugins) {
             return null;
         }
 
+        const { type } = this.props;
         let plugins = [];
 
         if (typeof type === "string") {
-            plugins = ctxPlugins.filter(pl => type === pl.type);
+            plugins = ctxPlugins.filter(pl => {
+                return pl.type === type;
+            });
         } else {
             Object.values(type).forEach(key => {
                 plugins = [...plugins, ...ctxPlugins.filter(pl => pl.type === key)];
@@ -82,16 +85,26 @@ export class Plugins extends React.Component {
         }
 
         // Generate checksum
-        return md5(plugins.map(pl => `${pl.name}:${pl.__registrationTime}`).join(";"));
+        return md5(
+            `${JSON.stringify(type)};` +
+                plugins.map(pl => `${pl.name}:${pl.__registrationTime}`).join(";")
+        );
     }
 
-    getPlugins() {
+    getPlugins(ctxPlugins, options = { sync: false }) {
         const { type, filter } = this.props;
-        const contextChecksum = this.generateContextChecksum();
-        const { checksum, plugins } = this.state;
 
-        if (checksum !== contextChecksum) {
-            // Start loading
+        if (options.sync) {
+            return getPluginsSync(type);
+        }
+
+        // For async plugins we utilize local caching to avoid async
+        // rendering when plugins do not change across renders.
+        const contextChecksum = this.generateContextChecksum(ctxPlugins);
+        const typeKey = JSON.stringify(type);
+
+        if (!Plugins.cache[typeKey] || !Plugins.cache[typeKey][contextChecksum]) {
+            // Start loading and do not await results.
             getPlugins(type)
                 .then(plugins => {
                     if (Array.isArray(plugins) && typeof filter === "function") {
@@ -99,27 +112,37 @@ export class Plugins extends React.Component {
                     }
                     return plugins;
                 })
-                .then(plugins => this.setState({ plugins, checksum: contextChecksum }));
+                .then(plugins => {
+                    set(Plugins.cache, `${typeKey}.${contextChecksum}`, plugins);
+                    this.setState({ checksum: contextChecksum });
+                });
         }
 
-        return plugins;
+        return get(Plugins.cache, `${typeKey}.${contextChecksum}`, null);
     }
 
     render() {
-        const { type, loading } = this.props;
+        const { type, loading, sync } = this.props;
         invariant(type, `Plugins component requires a "type" prop!`);
 
-        const plugins = this.getPlugins();
-        if (!plugins) {
-            return typeof loading === "undefined" ? (
-                <CircularProgress />
-            ) : typeof loading === "function" ? (
-                React.createElement(loading)
-            ) : (
-                loading
-            );
-        } else {
-            return this.renderPlugins(plugins);
-        }
+        return (
+            <PluginsConsumer>
+                {ctxPlugins => {
+                    const plugins = this.getPlugins(ctxPlugins || [], { sync });
+
+                    if (!plugins) {
+                        return typeof loading === "undefined" ? (
+                            <CircularProgress />
+                        ) : typeof loading === "function" ? (
+                            React.createElement(loading)
+                        ) : (
+                            loading
+                        );
+                    } else {
+                        return this.renderPlugins(plugins);
+                    }
+                }}
+            </PluginsConsumer>
+        );
     }
 }
