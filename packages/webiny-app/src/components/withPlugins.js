@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { Plugins } from "./Plugins";
+import { Plugins } from "./plugins";
 
 export type WithPluginsOptions = {
     prop?: string,

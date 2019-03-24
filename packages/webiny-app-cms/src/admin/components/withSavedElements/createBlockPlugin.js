@@ -1,7 +1,6 @@
 // @flow
 import React from "react";
 import cloneDeep from "lodash/cloneDeep";
-import { registerPlugins } from "webiny-plugins";
 import { Image } from "webiny-ui/Image";
 
 type Element = {
@@ -18,7 +17,7 @@ type Element = {
 };
 
 export default (el: Element) => {
-    registerPlugins({
+    return {
         id: el.id,
         name: "cms-saved-block-" + el.id,
         type: "cms-block",
@@ -38,5 +37,5 @@ export default (el: Element) => {
                 />
             );
         }
-    });
+    };
 };

@@ -28,8 +28,10 @@ export default [
             // Apps / integrations can register settings plugins and add menu items like the following.
             let settingsPlugins: Array<SettingsPluginType> = getPluginsSync("settings");
 
+            const plugins = [];
+
             settingsPlugins.forEach((sp: SettingsPluginType) => {
-                registerPlugins({
+                plugins.push({
                     type: "route",
                     name: "route-settings-" + sp.name,
                     route: {
@@ -50,7 +52,7 @@ export default [
                 )
             };
 
-            registerPlugins({
+            plugins.push({
                 type: "menu",
                 name: "menu-settings",
                 render({ Menu }) {
@@ -84,6 +86,8 @@ export default [
                     return null;
                 }
             });
+            
+            registerPlugins(plugins);
         }
     }
 ];

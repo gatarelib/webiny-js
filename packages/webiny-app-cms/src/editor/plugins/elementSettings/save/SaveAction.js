@@ -8,6 +8,7 @@ import { Plugin } from "webiny-app/components/plugins";
 import SaveDialog from "./SaveDialog";
 import { withSnackbar } from "webiny-admin/components";
 import { withKeyHandler } from "webiny-app-cms/editor/components";
+import { registerPlugins } from "webiny-plugins";
 import { getActiveElementId, getElementWithChildren } from "webiny-app-cms/editor/selectors";
 import { createElementPlugin, createBlockPlugin } from "webiny-app-cms/admin/components";
 import { createElement, updateElement } from "webiny-app-cms/admin/graphql/pages";
@@ -115,9 +116,9 @@ export default compose(
             hideDialog();
             const { data } = res.cms.element;
             if (data.type === "block") {
-                createBlockPlugin(data);
+                registerPlugins(createBlockPlugin(data));
             } else {
-                createElementPlugin(data);
+                registerPlugins(createElementPlugin(data));
             }
 
             showSnackbar(

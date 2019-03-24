@@ -1,6 +1,7 @@
 // @flow
 import { graphql } from "react-apollo";
 import { get } from "dot-prop-immutable";
+import { registerPlugins } from "webiny-plugins";
 import { listElements } from "webiny-app-cms/admin/graphql/pages";
 import createElementPlugin from "./createElementPlugin";
 import createBlockPlugin from "./createBlockPlugin";
@@ -14,17 +15,20 @@ export const withSavedElements = () =>
                 return { elements: null };
             }
 
+            const plugins = [];
             const elements = get(data, "cms.elements.data");
             if (!elementsAdded) {
                 elements.forEach(el => {
                     if (el.type === "element") {
-                        createElementPlugin(el);
+                        plugins.push(createElementPlugin(el));
                     } else {
-                        createBlockPlugin(el);
+                        plugins.push(createBlockPlugin(el));
                     }
                 });
                 elementsAdded = true;
             }
+
+            registerPlugins(plugins);
 
             return { elements };
         }

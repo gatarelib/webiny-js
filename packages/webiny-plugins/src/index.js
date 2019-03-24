@@ -6,13 +6,23 @@ const _loaded = {};
 const _initialized = {};
 const _callbacks = { onRegister: [], onUnregister: [] };
 
-const _register = plugins => {
+const _normalize = plugins => {
+    let normalized = [];
     for (let i = 0; i < plugins.length; i++) {
         let plugin = plugins[i];
         if (Array.isArray(plugin)) {
-            _register(plugin);
+            normalized = [...normalized, ..._normalize(plugin)];
             continue;
         }
+
+        normalized.push(plugin);
+    }
+    return normalized;
+};
+
+const _register = plugins => {
+    for (let i = 0; i < plugins.length; i++) {
+        let plugin = plugins[i];
 
         const name = plugin._name || plugin.name;
         if (!name) {
@@ -23,12 +33,11 @@ const _register = plugins => {
 
         _plugins[name] = plugin;
         _loaded[name] = !plugin.factory;
-
-        _callbacks.onRegister.map(cb => cb(plugin));
     }
+    _callbacks.onRegister.map(cb => cb(plugins));
 };
 
-export const registerPlugins = (...args: any): void => _register(args);
+export const registerPlugins = (...args: any): void => _register(_normalize(args));
 
 export const onRegister = (callback: Function) => {
     _callbacks.onRegister.push(callback);
@@ -60,15 +69,6 @@ export const getPlugins = async (type: string | Object): Promise<Array<PluginTyp
     return loaded;
 };
 
-export const getPluginsSync = (type: string): Array<PluginType> => {
-    const values: Array<PluginType> = (Object.values(_plugins): any);
-    return values.filter((plugin: PluginType) => (type ? plugin.type === type : true));
-};
-
-export const getPluginSync = (name: string): PluginType => {
-    return _plugins[name];
-};
-
 export const getPlugin = async (name: string): Promise<PluginType | null> => {
     if (!_plugins[name]) {
         return null;
@@ -88,17 +88,13 @@ export const getPlugin = async (name: string): Promise<PluginType | null> => {
     return _plugins[name];
 };
 
-export const getPluginSync = (name: string): PluginType | null => {
-    if (!__plugins[name]) {
-        return null;
-    }
+export const getPluginsSync = (type: string): Array<PluginType> => {
+    const values: Array<PluginType> = (Object.values(_plugins): any);
+    return values.filter((plugin: PluginType) => (type ? plugin.type === type : true));
+};
 
-    if (!__loaded[name]) {
-        const loaded = __plugins[name].factory();
-        __plugins[name] = { ...__plugins[name], ...loaded };
-        __loaded[name] = true;
-    }
-    return __plugins[name];
+export const getPluginSync = (name: string): PluginType => {
+    return _plugins[name];
 };
 
 export const unregisterPlugin = (name: string): void => {
