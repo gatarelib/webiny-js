@@ -1,39 +1,40 @@
 import * as React from "react";
 import { getPluginsSync, onRegister, onUnregister } from "webiny-plugins";
 
-export const PluginsContext = React.createContext();
+export const PluginsContext = React.createContext(getPluginsSync());
 
 export class PluginsProvider extends React.Component {
-    plugins = getPluginsSync();
-
     state = {
-        ts: null
+        plugins: getPluginsSync()
     };
 
     componentDidMount() {
+        this.rendering = false;
+
         onRegister(pls => {
             if (!pls.length) {
                 return;
             }
 
-            this.plugins = getPluginsSync();
-
             // This little hack is required to prevent multiple state updates during same render cycle.
-            // If a render is in progress, we set a `nextUpdate` flag to update the state once it is finished.
-            // NOTE 1: we are not using the `state` here, just a plain class property to check in `componentDidUpdate`.
-            // NOTE 2: this can be done using `setTimeout`, but I'm afraid we will have serious problems with setTimeout
-            // and SSR on Lambda once we get to that, so it's best to stay on the safe side.
-
             if (!this.rendering) {
-                this.setState({ ts: new Date().getTime() });
+                this.setState(state => ({ plugins: [...state.plugins, ...pls] }));
             } else {
-                this.nextUpdate = true;
+                if (Array.isArray(this.nextUpdate)) {
+                    this.nextUpdate = [...this.nextUpdate, ...pls];
+                } else {
+                    this.nextUpdate = [...pls];
+                }
             }
         });
 
-        onUnregister(() => {
-            this.plugins = getPluginsSync();
-            this.setState({ ts: new Date().getTime() });
+        onUnregister(name => {
+            const plugins = [...this.state.plugins];
+            const index = plugins.findIndex(pl => pl.name === name);
+            if (index > -1) {
+                plugins.splice(index, 1);
+                this.setState({ plugins });
+            }
         });
     }
 
@@ -42,15 +43,18 @@ export class PluginsProvider extends React.Component {
 
         // If the `nextUpdate` flag is set, we need to trigger a re-render.
         if (this.nextUpdate) {
-            this.setState({ ts: new Date().getTime() });
-            this.nextUpdate = null;
+            this.setState(state => {
+                const newState = { plugins: [...state.plugins, ...this.nextUpdate] };
+                this.nextUpdate = null;
+                return newState;
+            });
         }
     }
 
     render() {
         this.rendering = true;
         return (
-            <PluginsContext.Provider value={this.plugins}>
+            <PluginsContext.Provider value={this.state.plugins}>
                 {this.props.children}
             </PluginsContext.Provider>
         );

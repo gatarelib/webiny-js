@@ -1,9 +1,7 @@
 import * as React from "react";
 import md5 from "md5";
 import invariant from "invariant";
-import { get, set } from "lodash";
-import { isEqual } from "lodash";
-import { getPlugin, getPlugins, getPluginsSync } from "webiny-plugins";
+import { getPlugin, getPlugins } from "webiny-plugins";
 import { PluginsConsumer } from "webiny-app/components/context/plugins";
 import { CircularProgress } from "webiny-ui/Progress";
 
@@ -18,18 +16,25 @@ class LazyPlugin extends React.Component {
     }
 
     render() {
+        const { loading } = this.props;
         let { plugin } = this.state;
         if (!plugin) {
-            return <CircularProgress />;
-        } else {
-            return this.props.render(plugin);
+            return typeof loading === "undefined" ? (
+                <CircularProgress />
+            ) : typeof loading === "function" ? (
+                React.createElement(loading)
+            ) : (
+                loading
+            );
         }
+        return this.props.render(plugin);
     }
 }
 
 export const Plugin = ({ name, children, loading, params }) => {
     return (
         <LazyPlugin
+            loading={loading}
             name={name}
             render={plugin => {
                 if (typeof children === "function") {
@@ -43,12 +48,12 @@ export const Plugin = ({ name, children, loading, params }) => {
 };
 
 export class Plugins extends React.Component {
-    static cache = {};
+    cache = {};
 
     state = {
         checksum: null
     };
-    
+
     renderPlugins(plugins) {
         const { children, params } = this.props;
 
@@ -91,34 +96,32 @@ export class Plugins extends React.Component {
         );
     }
 
-    getPlugins(ctxPlugins, options = { sync: false }) {
+    getPlugins(ctxPlugins) {
         const { type, filter } = this.props;
-
-        if (options.sync) {
-            return getPluginsSync(type);
-        }
 
         // For async plugins we utilize local caching to avoid async
         // rendering when plugins do not change across renders.
         const contextChecksum = this.generateContextChecksum(ctxPlugins);
-        const typeKey = JSON.stringify(type);
 
-        if (!Plugins.cache[typeKey] || !Plugins.cache[typeKey][contextChecksum]) {
+        if (!this.cache[contextChecksum]) {
             // Start loading and do not await results.
-            getPlugins(type)
-                .then(plugins => {
-                    if (Array.isArray(plugins) && typeof filter === "function") {
-                        return plugins.filter(filter);
-                    }
-                    return plugins;
-                })
-                .then(plugins => {
-                    set(Plugins.cache, `${typeKey}.${contextChecksum}`, plugins);
-                    this.setState({ checksum: contextChecksum });
-                });
+            getPlugins(type).then(plugins => {
+                this.cache[contextChecksum] = plugins;
+                this.setState({ checksum: contextChecksum });
+            });
         }
 
-        return get(Plugins.cache, `${typeKey}.${contextChecksum}`, null);
+        const { checksum } = this.state;
+        const plugins = checksum ? this.cache[checksum] : null;
+        if (plugins) {
+            if (Array.isArray(plugins) && typeof filter === "function") {
+                return plugins.filter(filter);
+            }
+
+            return plugins;
+        }
+
+        return null;
     }
 
     render() {
@@ -138,11 +141,13 @@ export class Plugins extends React.Component {
                         ) : (
                             loading
                         );
-                    } else {
-                        return this.renderPlugins(plugins);
                     }
+
+                    return this.renderPlugins(plugins);
                 }}
             </PluginsConsumer>
         );
     }
 }
+
+window.Plugins = Plugins;

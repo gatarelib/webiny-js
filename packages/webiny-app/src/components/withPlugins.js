@@ -13,7 +13,7 @@ export type WithPluginsOptions = {
 
 export const withPlugins = (options: WithPluginsOptions): Function => {
     return (BaseComponent: typeof React.Component) => {
-        return function withPlugins(props: Object) {
+        return function withPlugins(props: *) {
             return (
                 <Plugins {...options}>
                     {({ plugins }) => {

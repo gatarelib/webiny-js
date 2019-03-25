@@ -67,7 +67,7 @@ const stateToProps = state => ({
 });
 
 export default compose(
-    connect(stateToProps),
+    withPlugins({ type: "cms-editor-content" }),
     withCms(),
-    withPlugins({ type: "cms-editor-content" })
+    connect(stateToProps)
 )(Content);

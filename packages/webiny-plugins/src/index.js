@@ -29,7 +29,7 @@ const _register = plugins => {
             throw Error(`Plugin must have a "name" or "_name" key.`);
         }
 
-        plugin._registrationTime = new Date().getTime();
+        plugin.__registrationTime = new Date().getTime();
 
         _plugins[name] = plugin;
         _loaded[name] = !plugin.factory;
